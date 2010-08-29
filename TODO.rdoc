@@ -1,0 +1,4 @@
+TODO LIST
+* dodac GROUP_BY dla select
+* FIX zrobic testy dla collection_input
+* dodac opcje :custom dla niestandardowych atrybutow HTML date-*
