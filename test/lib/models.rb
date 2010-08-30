@@ -39,7 +39,7 @@ class User < OpenStruct
   include ActiveModel::Conversion
   include ActiveModel::Validations
   
-  attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_path, :birthday_at, :user_zone
+  attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_phone, :birthday_at, :user_zone
   alias_method :birthday_on, :birthday_at
   
   attr_accessor :id, :country_id

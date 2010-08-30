@@ -60,9 +60,9 @@ module CaseForm
         #
         #   # object.errors[:name] = ['can't be blank', 'should be uniq']
         #
-        #   <span>
+        #   <div>
         #     can't be blank and should be uniq
-        #   </span>
+        #   </div>
         #
         def translated_sentence
           method_errors.to_sentence(:words_connector     => error_connector, 

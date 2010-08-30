@@ -1,9 +1,16 @@
 # coding: utf-8
 module CaseForm
   module Labels
-    # == Form label for input
+    # == Label
     # 
     # Generate label for model attribute. By default it use I18n translation (see lookups).
+    # If method is required by validation or attribute column option, should add required symbol.
+    #
+    # == Label config
+    # 
+    # * CaseForm.all_fields_required
+    # * CaseForm.require_symbol
+    #
     #
     # == Examples:
     #
@@ -19,12 +26,12 @@ module CaseForm
     #   <% end %>
     #
     # == Allowed options:
-    # * :id - HTML ID
-    # * :class - HTML class
-    # * :style - not recommended HTML styles (use CSS)
-    # * :for - label's target 
-    # * :text - text for label, overwrite a default value
-    # * :required - add "required" symbol to label if attribute is needed in validation or as column option "NULL" 
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:for+ - label's target 
+    # * +:text+ - text for label, overwrite a default value
+    # * +:required+ - add "required" symbol to label if attribute is needed by validation or as column option "NULL" 
     #
     # == I18n lookups priority:
     #
@@ -40,8 +47,12 @@ module CaseForm
     # == Form hint for input
     # 
     # Generate hint for input as simple HTML tag. Hints can be use for model attribute - it use I18n 
-    # for translate. You can also enter just some string as argument or :text option for different situation.
+    # for translate. You can also enter just some string as argument or +:text+ option for different situation.
     # I18n lookup see bottom.
+    #
+    # == Hint config
+    # 
+    # * CaseForm.hint_tag
     #
     # == Examples for model attribute:
     #
@@ -64,11 +75,11 @@ module CaseForm
     #
     # == Allowed options:
     #
-    # * :id - HTML ID
-    # * :class - HTML class
-    # * :style - not recommended HTML styles (use CSS)
-    # * :text - text for hint, overwrite a I18n or string value
-    # * :tag - hint's HTML tag
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:text+ - text for hint, overwrite a I18n or string value
+    # * +:tag+ - hint's HTML tag
     #
     # == I18n lookups priority:
     #

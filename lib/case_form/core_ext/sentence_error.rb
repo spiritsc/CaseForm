@@ -12,6 +12,7 @@ module CaseForm
     #   user = User.create(:address => '123 First St.')
     #   user.errors.full_sentences # =>
     #     ["Password is too short (minimum is 5 characters), can't be blank and should match confirmation"]
+    #
     def full_sentences(options={})
       full_sentences = []
 

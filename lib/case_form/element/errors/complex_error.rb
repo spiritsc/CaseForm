@@ -7,8 +7,8 @@ module CaseForm
       # 
       def generate
         contents = []
-        contents << template.content_tag(header_tag, header_message) if header_message
-        contents << template.content_tag(message_tag, message)       if message
+        contents << template.content_tag(header_tag, header_message) unless options[:header_message] == false
+        contents << template.content_tag(message_tag, message)       unless options[:message] == false
         contents << template.content_tag(:ul, error_messages)
         
         template.content_tag(error_tag, contents.join.html_safe, html_options)

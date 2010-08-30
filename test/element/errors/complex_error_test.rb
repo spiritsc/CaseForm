@@ -124,6 +124,16 @@ class ComplexErrorTest < ActionView::TestCase
     assert_select specific_tag
   end
   
+  test "should generate complex error without header message" do
+    errors_case_form_for(:header_message => false)
+    assert_select "h2", 0
+  end
+  
+  test "should generate complex error without message" do
+    errors_case_form_for(:message => false)
+    assert_select "p", 0
+  end
+  
   test "should generate hint with wrong options" do
     assert_raise(ArgumentError) { errors_case_form_for(:foo => :bar) }
   end

@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'test/unit'
 
-gem 'actionpack', '3.0.0.rc'
-gem 'activemodel', '3.0.0.rc'
+gem 'actionpack', '3.0.0'
+gem 'activemodel', '3.0.0'
 
 require 'active_model'
 require 'action_controller'
@@ -26,8 +26,8 @@ class ActionView::TestCase
   
   # Generate fake models
   def generate_virtual_models
-    @user = User.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true)
-    @valid_user = ValidUser.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true)
+    @user = User.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true, :description => "User note", :age => 18, :height => 188, :weight => 82.5)
+    @valid_user = ValidUser.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true, :height => 188)
     @invalid_user = InvalidUser.new(:id => 1, :firstname => "J", :lastname => "Doe")
     
     # @profile = Profile.new()
