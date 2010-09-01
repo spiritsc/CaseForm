@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class HiddenInput < Input
-      self.allowed_options -= [:autofocus, :required]
+      self.allowed_options -= [:autofocus, :required, :label, :hint, :error]
       
       def generate
         builder.hidden_field(specific_method, html_options)

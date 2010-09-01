@@ -2,12 +2,12 @@
 module CaseForm
   module Element
     class TextInput < Input
-      self.allowed_options << [:cols, :rows, :size, :pattern, :readonly, :maxlength, :escape, :disabled]
+      self.allowed_options << [:cols, :rows, :readonly, :maxlength, :escape, :disabled, :placeholder]
       
       private
         def default_options
-          options[:cols] ||= 40
-          options[:rows] ||= 20
+          options[:cols] ||= CaseForm.textarea_cols
+          options[:rows] ||= CaseForm.textarea_rows
           super
         end
         

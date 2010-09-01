@@ -2,6 +2,8 @@
 module CaseForm
   module Element
     class SearchInput < Input
+      self.allowed_options -= [:required, :error, :hint]
+      
       private
         def wrapper_options
           wrapper_options = super

@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class StringInput < Input
-      self.allowed_options << [:as, :size, :placeholder, :pattern, :readonly, :maxlength]
+      self.allowed_options << [:as, :size, :placeholder, :pattern, :disabled, :readonly, :maxlength]
       
       private
         def default_options

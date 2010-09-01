@@ -91,7 +91,7 @@ module CaseForm
           if validations.any?
             validations.first.options[:maximum]
           else
-            CaseForm.input_limit
+            CaseForm.input_size
           end
         end
         

@@ -22,6 +22,7 @@ module CaseForm
           options[:end_year]           ||= nested_date_options(:year, :end, Time.now.year + 10)
           options[:use_month_names]      = nested_date_options(:month, :names, nil)
           options[:use_short_month]      = nested_date_options(:month, :short, false)
+          options[:minute_step]        ||= nested_date_options(:minute, :step, 1)
           options[:datetime_separator] ||= options.delete(:separator) || nil
           options[:default]            ||= options.delete(:datetime) || nil
           options[:include_blank]        = options.delete(:blank) || false

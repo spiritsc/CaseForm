@@ -159,6 +159,16 @@ class DateTimeInputTest < ActionView::TestCase
     assert_select("select#user_created_at_2i", 1) { assert_select "option", "February" }
   end
   
+  test "should generate datetime input with minute step" do
+    datetime_case_form_for(@user, :created_at, :minute => {:step => 15})
+    assert_select("select#user_created_at_5i", 1) { assert_select "option", 4 }
+  end
+  
+  test "should generate datetime input with :minute_step" do
+    datetime_case_form_for(@user, :created_at, :minute_step => 15 )
+    assert_select("select#user_created_at_5i", 1) { assert_select "option", 4 }
+  end
+  
   test "should generate datetime input without prompt" do
     datetime_case_form_for(@user, :created_at, :prompt => false)
     assert_select("select#user_created_at_1i", 1) { assert_select "option", :count => 0, :text => "Year" }

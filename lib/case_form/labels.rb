@@ -25,6 +25,11 @@ module CaseForm
     #                                                 # Overwrite I18n lookup
     #   <% end %>
     #
+    # == Default label config
+    # 
+    # * CaseForm.all_fields_required
+    # * CaseForm.require_symbol
+    #
     # == Allowed options:
     # * +:id+ - HTML ID
     # * +:class+ - HTML class
@@ -72,6 +77,10 @@ module CaseForm
     #   <%= case_form_for(@user) do |f| %>
     #     <%= f.hint "Enter your firstname" %>        # Uses string argument
     #   <% end %>
+    #
+    # == Default hint config
+    # 
+    # * CaseForm.hint_tag
     #
     # == Allowed options:
     #

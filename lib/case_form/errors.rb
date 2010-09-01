@@ -33,7 +33,7 @@ module CaseForm
     # * message - excluded if +:message+ is *false*
     # * list of errors
     #
-    # == Error messages config
+    # == Default error messages config
     # 
     # * CaseForm.error_tag
     # * CaseForm.error_type
@@ -112,7 +112,7 @@ module CaseForm
     alias_method :errors_for, :error_messages
     alias_method :errors, :error_messages
     
-    # == Error message on method
+    # == Error messages on method
     #
     # Creates a list with all errors on method in object. 
     # Elements of list can be seperated for each error (*list* type) or grouped (*sentence* type). 
@@ -135,7 +135,7 @@ module CaseForm
     #   # errors on firstname:
     #     can't be blank and should be uniq
     #
-    # == Error messages config
+    # == Default error messages config
     # 
     # * CaseForm.error_tag
     # * CaseForm.error_type

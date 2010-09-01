@@ -1,16 +1,11 @@
 # coding: utf-8
 module CaseForm
   module Buttons
-    # == Block with or for buttons
+    # == Buttons with or without block
     # 
     # With no arguments it creates fieldset with buttons defined in CaseForm config 
     # (by default :submit and :reset button). Also can create buttons determined in
     # arguments.
-    #
-    # == Buttons config
-    # 
-    # * CaseForm.form_buttons
-    # * CaseForm.wrapper_tag
     #
     # == Examples:
     #
@@ -20,14 +15,14 @@ module CaseForm
     #     <%= f.buttons %>
     #   <% end %>
     #
-    #   <div class="fieldset">
+    #   <fieldset class="fieldset">
     #     <div class="buttons">
     #       <input name="submit" type="submit" value="Create" />
     #     </div>
     #     <div class="buttons">
     #       <input name="reset" type="reset" value="Reset" />
     #     </div>
-    #   </div>
+    #   </fieldset>
     #   
     #   # or create buttons defined in arguments
     #
@@ -35,11 +30,11 @@ module CaseForm
     #     <%= f.buttons(:commit) %>
     #   <% end %>
     #
-    #   <div class="fieldset">
+    #   <fieldset class="fieldset">
     #     <div class="buttons">
     #       <input name="submit" type="submit" value="Create" />
     #     </div>
-    #   </div>
+    #   </fieldset>
     #   
     #   # or create buttons in block
     #   <%= case_form_for(@user) do |f| %>
@@ -48,11 +43,16 @@ module CaseForm
     #     <% end %>
     #   <% end %>
     #
-    #   <div class="fieldset">
+    #   <fieldset class="fieldset">
     #     <div class="buttons">
     #       <input name="submit" type="submit" value="Create" />
     #     </div>
-    #   </div>
+    #   </fieldset>
+    #
+    # == Default buttons config:
+    # 
+    # * CaseForm.form_buttons
+    # * CaseForm.wrapper_tag
     #
     # == Allowed options:
     # * +:id+ - HTML ID

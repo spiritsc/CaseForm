@@ -15,6 +15,9 @@ module CaseForm
   mattr_accessor :input_elements
   @@input_elements = [:label, :input, :error, :hint]
   
+  mattr_accessor :form_buttons
+  @@form_buttons = [:commit, :reset]
+  
   mattr_accessor :locked_columns
   @@locked_columns = [:id, :type, :lock_version, :version,
                       :created_at, :updated_at, :created_on, :updated_on]
@@ -22,28 +25,27 @@ module CaseForm
   mattr_accessor :input_types
   @@input_types = [:string, :text, :hidden, :password, :search, 
                    :email, :url, :telephone, :file,
-                   :datetime, :date, :time, 
+                   :datetime, :date, :time, :number, :range,
                    :checkbox, :radio, :select,
-                   :number, :range, 
-                   :has_many, :has_one, :belongs_to]
-  
-  mattr_accessor :all_fields_required
-  @@all_fields_required = false
-  
-  mattr_accessor :input_limit
-  @@input_limit = 50
-  
-  mattr_accessor :number_step
-  @@number_step = 1
+                   :association, :has_many, :has_one, :belongs_to]
   
   mattr_accessor :require_symbol
   @@require_symbol = "*"
   
-  mattr_accessor :form_buttons
-  @@form_buttons = [:commit, :reset]
+  mattr_accessor :all_fields_required
+  @@all_fields_required = false
   
-  mattr_accessor :main_html_class
-  @@main_html_class = :case_form
+  mattr_accessor :input_size
+  @@input_size = 50
+  
+  mattr_accessor :textarea_cols
+  @@textarea_cols = 20
+  
+  mattr_accessor :textarea_rows
+  @@textarea_rows = 10
+  
+  mattr_accessor :number_step
+  @@number_step = 1
   
   mattr_accessor :wrapper_tag
   @@wrapper_tag = :div

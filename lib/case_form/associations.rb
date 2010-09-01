@@ -2,11 +2,10 @@
 module CaseForm
   module Associations
     def association(*args, &block)
-      options = args.extract_options!
-      
       if block_given?
         case_fields_for(*args, &block)
       else
+        options = args.extract_options!
         specified_association(method, options)
       end
     end
