@@ -3,7 +3,7 @@ module CaseForm
   module Element
     class TimeInput < Input
       self.allowed_options -= [:id]
-      self.allowed_options << [:placeholder, :readonly, :elements, :separator, 
+      self.allowed_options << [:placeholder, :readonly, :elements, :separator, :time, :default, 
                                :prompt, :minute_step, :date, :blank, :disabled]
       
       private
@@ -13,6 +13,7 @@ module CaseForm
           options[:include_blank]     = options.delete(:blank) || false
           options[:include_seconds]   = time_seconds?
           options[:ignore_date]       = with_date?
+          options[:default]         ||= options.delete(:time) || nil
           super
         end
         

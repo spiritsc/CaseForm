@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class CollectionInput < Input
-      self.allowed_options << [:autofocus, :disabled, :checked, :selected, :readonly, 
+      self.allowed_options << [:disabled, :checked, :selected, :readonly, 
                                :collection, :label_method, :value_method]
                                
       private
@@ -44,7 +44,7 @@ module CaseForm
         def extract_collection(collection)
           return case collection.first
           when String, Integer, Symbol
-            collection.collect! { |c| [c, c] }
+            Array.new(collection).collect! { |c| [c, c] }
           when association_class
             extract_from_association_array(collection)
           else 

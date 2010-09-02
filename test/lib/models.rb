@@ -32,6 +32,18 @@ class Country < OpenStruct
      Country.new(:id => 4, :name => "Spain"),
      Country.new(:id => 5, :name => "US")]
   end
+  
+  def self.priority
+    self.all[1..3]
+  end
+  
+  def short
+    self.name[0...3]
+  end
+  
+  def non_id
+    self.name[0]
+  end
 end
 
 class User < OpenStruct
@@ -147,5 +159,9 @@ class Project < OpenStruct
     all = []
     5.times { |i| all << Project.new(:id => i, :name => "Project #{i}") }
     all
+  end
+  
+  def self.extra
+    self.all[1..3]
   end
 end

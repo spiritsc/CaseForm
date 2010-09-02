@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class NumberInput < Input
-      self.allowed_options << [:as, :min, :max, :in, :step, :readonly]
+      self.allowed_options << [:as, :min, :max, :in, :step, :readonly, :disabled]
       
       private
         def default_options

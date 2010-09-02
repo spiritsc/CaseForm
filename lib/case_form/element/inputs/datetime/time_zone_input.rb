@@ -3,7 +3,7 @@ module CaseForm
   module Element
     class TimeZoneInput < Input
       self.allowed_options << [:readonly, :blank, :disabled, 
-                               :priority_zones, :zones, :time_zone]
+                               :priority_zones, :zones, :default, :time_zone]
       
       private
         def default_options

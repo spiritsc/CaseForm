@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class FileInput < Input
-      self.allowed_options << [:multiple]
+      self.allowed_options << [:multiple, :readonly, :disabled]
       
       private
         def input

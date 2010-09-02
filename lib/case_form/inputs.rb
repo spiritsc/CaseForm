@@ -607,19 +607,43 @@ module CaseForm
       Element::DateTimeInput.new(self, method, options).generate
     end
     
-    # Generate date field
+    # == Date field
     #
-    # Generate telephone field with defined input elements.
+    # Generate date field with defined input elements.
     #
     # == Example:
     #
     #   case_form_for(@user) do |f|
-    #     f.telephone(:telephone)
+    #     f.date(:born_at)
     #   end
     #
     #   <div class="inputs">
-    #     <label class="label" for="user_telephone" id="user_telephone_label">Telephone</label>
-    #     <input class="input" id="user_telephone" name="user[telephone]" size="50" type="tel" value="" />
+    #     <label class="label" for="user_born_at" id="user_born_at_label">Born at</label>
+    #     <select class="input" id="user_born_at_1i" name="user[born_at(1i)]">
+    #       <option>...</option>          # Options for year
+    #     <select> 
+    #     <select class="input" id="user_born_at_2i" name="user[born_at(2i)]">
+    #       <option>...</option>          # Options for month
+    #     </select>
+    #     <select class="input" id="user_born_at_3i" name="user[born_at(3i)]">
+    #       <option>...</option>          # Options for day
+    #     </select>
+    #   </div>
+    #
+    #   # without day
+    #
+    #   case_form_for(@user) do |f|
+    #     f.date(:born_at, :day => false)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_born_at" id="user_born_at_label">Born at</label>
+    #     <select class="input" id="user_born_at_1i" name="user[born_at(1i)]">
+    #       <option>...</option>          # Options for year
+    #     <select> 
+    #     <select class="input" id="user_born_at_2i" name="user[born_at(2i)]">
+    #       <option>...</option>          # Options for month
+    #     </select>
     #   </div>
     #
     # == Allowed options:
@@ -631,10 +655,19 @@ module CaseForm
     # * +:label+ - label options (*false* to not create)
     # * +:hint+ - hint options (*false* to not create)
     # * +:error+ - error options (*false* to not create)
-    # * +:size+ - input size (default value in CaseForm config)
-    # * +:maxlength+ - max lenght of text
+    # * +:elements+ - elements of date field (available: +:year+, +:month+, +:day+)
+    # * +:separator+ - date separator (default: " - ")
+    # * +:year+ - year select (available options: +:start+ as start year, +:end+ as end year or *false* to not create)
+    # * +:start_year+ - overwrite <tt>:year => { :start => ... }</tt> option
+    # * +:end_year+ - overwrite <tt>:year => { :end => ... }</tt> option
+    # * +:month+ - month select (available options: +:names+ as month names, +:short+ to use short names or *false* to not create)
+    # * +:short_month+ - overwrite <tt>:month => { :short => ... }</tt> option
+    # * +:day+ - day select (*false* to not create)
+    # * +:date+ - selected date
+    # * +:default+ - alias for +:date+ option
+    # * +:prompt+ - custom messages for each select (available options: +:year+, +:month+ and +:day+ or *true* for auto)
+    # * +:blank+ - include blank option for each select
     # * +:placeholder+ - HTML placeholder (HTML5)
-    # * +:pattern+ - Javascript pattern of text (HTML5)
     # * +:readonly+ - read-only input
     # * +:disabled+ - disable input
     #
@@ -642,41 +675,392 @@ module CaseForm
       Element::DateInput.new(self, method, options).generate
     end
     
-    # Generate time field
+    # == Time field
+    #
+    # Generate time field with defined input elements.
+    #
+    # == Example:
+    #
+    #   case_form_for(@user) do |f|
+    #     f.time(:login_at)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_login_at" id="user_login_at_label">Login at</label>
+    #     <select class="input" id="user_login_at_4i" name="user[login_at(4i)]">
+    #       <option>...</option>          # Options for hour
+    #     <select> 
+    #     <select class="input" id="user_login_at_5i" name="user[login_at(5i)]">
+    #       <option>...</option>          # Options for minute
+    #     </select>
+    #   </div>
+    #
+    #   # with second
+    #
+    #   case_form_for(@user) do |f|
+    #     f.date(:born_at, :elements => [:hour, :minute, :second])
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_login_at" id="user_login_at_label">Login at</label>
+    #     <select class="input" id="user_login_at_4i" name="user[login_at(4i)]">
+    #       <option>...</option>          # Options for hour
+    #     <select> 
+    #     <select class="input" id="user_login_at_5i" name="user[login_at(5i)]">
+    #       <option>...</option>          # Options for minute
+    #     </select>
+    #     <select class="input" id="user_login_at_6i" name="user[login_at(6i)]">
+    #       <option>...</option>          # Options for second
+    #     </select>
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:elements+ - elements of time field (available: +:hour+, +:minute+, +:second+)
+    # * +:separator+ - time separator (default " : ")
+    # * +:minute_step+ - minute steps (for example: "15" gives values: ["00", "15", "30", "45"])
+    # * +:date+ - add date fields as hidden
+    # * +:time+ - selected time
+    # * +:default+ - alias for +:time+ option
+    # * +:prompt+ - custom messages for each select (available options: +:hour+, +:minute+ and +:second+ or *true* for auto)
+    # * +:blank+ - include blank option for each select
+    # * +:placeholder+ - HTML placeholder (HTML5)
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def time(method, options={})
       Element::TimeInput.new(self, method, options).generate
     end
     
+    # == Time zone field
+    #
+    # Generate time zone field with input elements.
+    # 
+    # == Example:
+    #
+    #   case_form_for(@user) do |f|
+    #     f.time(:time_zone)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_time_zone" id="user_time_zone_label">Time zone</label>
+    #     <select class="input" id="user_time_zone" name="user[time_zone]">
+    #       <option>...</option>
+    #     </select>
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:priority_zones+ - collection of priority zones
+    # * +:zones+ - collection of all time zones
+    # * +:time_zone+ - selected time zone
+    # * +:default+ - alias for +:time_zone+ option
+    # * +:prompt+ - custom messages for select
+    # * +:blank+ - include blank option for select
+    # * +:placeholder+ - HTML placeholder (HTML5)
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def time_zone(method, options={})
       Element::TimeZoneInput.new(self, method, options).generate
     end
     
-    # Generate file field
+    # == File field
+    #
+    # Generate file field with input elements. Remeber to add <tt>:multipart => true</tt> option in form!
+    #
+    # == Example:
+    #
+    #   case_form_for(@user, :multipart => true) do |f|
+    #     f.file(:avatar)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_avatar" id="user_avatar_label">Avatar</label>
+    #     <input class="input" id="user_avatar" name="user[avatar]" type="file" />
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:multiple+ - allow upload multiple files
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def file(method, options={})
       Element::FileInput.new(self, method, options).generate
     end
     
-    # Generate checkbox field
+    # == Checkbox field
+    #
+    # Generate simple or collection of checkboxes with input elements. Collection can have many of types.
+    #
+    # == Collection types:
+    #
+    # * association class - <tt>:collection => Country</tt>
+    # * +Array+ with model objects - <tt>:collection => Country.priority</tt>
+    # * +Array+ with label and value - <tt>:collection => [["Administrator", 1], ["Author", 2]]</tt>
+    # * +Array+ with same labels and values - <tt>:collection => ["Administrator", "Author"]</tt>
+    # * +Hash+ - <tt>:collection => { "Administrator" => 1, "Author" => 2 }</tt>
+    # * +Range+ - <tt>:collection => 1..100</tt>
+    #
+    # Default collection is <tt>[["Yes", true], ["No", false]]</tt>
+    #
+    # == Example:
+    #
+    #   # With default collection
+    #
+    #   case_form_for(@user) do |f|
+    #     f.checkbox(:admin)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_admin" id="user_admin_label">Admin</label>
+    #     <input name="user[admin]" type="hidden" value="" />
+    #     <input class="input" id="user_admin_true" name="user[admin]" type="checkbox" value="true" />
+    #     <label class="label" for="user_admin_true" id="user_admin_true_label">Yes</label>
+    #   </div>
+    #
+    #   # with array collection
+    #   
+    #   case_form_for(@user) do |f|
+    #     f.checkbox(:role, :collection => [["Admin", 1], ["Author", 2], ["User", 3]])
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_role" id="user_role_label">Role</label>
+    #     <input name="user[role]" type="hidden" value="" />
+    #     <input class="input" id="user_role_1" name="user[role]" type="checkbox" value="1" />
+    #     <label class="label" for="user_role_1" id="user_role_1_label">Administrator</label>
+    #     <input name="user[role]" type="hidden" value="" />
+    #     <input class="input" id="user_role_2" name="user[role]" type="checkbox" value="2" />
+    #     <label class="label" for="user_role_2" id="user_role_2_label">Author</label>
+    #     <input name="user[role]" type="hidden" value="" />
+    #     <input class="input" id="user_role_3" name="user[role]" type="checkbox" value="3" />
+    #     <label class="label" for="user_role_3" id="user_role_3_label">User</label>
+    #   </div>
+    #
+    #   # with association class
+    #
+    #   # class User
+    #   #  belongs_to :country
+    #   # end
+    #   
+    #   case_form_for(@user) do |f|
+    #     f.checkbox(:country, :collection => Country, :label_method => :short_name, :value_method => :id)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_country" id="user_country_label">Country</label>
+    #     <input name="user[country_id]" type="hidden" value="" />
+    #     <input class="input" id="user_country_1" name="user[country_id]" type="checkbox" value="1" />
+    #     <label class="label" for="user_country_1" id="user_country_1_label">Poland</label>
+    #     <input name="user[country_id]" type="hidden" value="" />
+    #     <input class="input" id="user_country_2" name="user[country_id]" type="checkbox" value="2" />
+    #     <label class="label" for="user_country_2" id="user_country_2_label">Spain</label>
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:checked+ - list of checked values
+    # * +:selected+ - same as +:checked+ option
+    # * +:collection+ - collection of available values
+    # * +:label_method+ - method for labels in collection
+    # * +:value_method+ - method for values in collection
+    # * +:unchecked_value+ - value for hidden input
+    # * +:allow_multiple+ - allow multiple select (add "[]" to checkbox name)
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def checkbox(method, options={})
       Element::CheckboxInput.new(self, method, options).generate
     end
     
-    # Generate select field
+    # == Select field
     def select(method, options={})
       Element::SelectInput.new(self, method, options).generate
     end
     
-    # Generate radio field
+    # == Radio button field
+    #
+    # Generate simple or collection of radio's with input elements. Collection can have many of types.
+    #
+    # == Collection types:
+    #
+    # * association class - <tt>:collection => Country</tt>
+    # * +Array+ with model objects - <tt>:collection => Country.priority</tt>
+    # * +Array+ with label and value - <tt>:collection => [["Administrator", 1], ["Author", 2]]</tt>
+    # * +Array+ with same labels and values - <tt>:collection => ["Administrator", "Author"]</tt>
+    # * +Hash+ - <tt>:collection => { "Administrator" => 1, "Author" => 2 }</tt>
+    # * +Range+ - <tt>:collection => 1..100</tt>
+    #
+    # Default collection is <tt>[["Yes", true], ["No", false]]</tt>
+    #
+    # == Example:
+    #
+    #   # With default collection
+    #
+    #   case_form_for(@user) do |f|
+    #     f.radio(:admin)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_admin" id="user_admin_label">Admin</label>
+    #     <input class="input" id="user_admin_true" name="user[admin]" type="radio" value="true" />
+    #     <label class="label" for="user_admin_true" id="user_admin_true_label">Yes</label>
+    #     <input class="input" id="user_admin_false" name="user[admin]" type="radio" value="false" />
+    #     <label class="label" for="user_admin_false" id="user_admin_false_label">No</label>
+    #   </div>
+    #
+    #   # with array collection
+    #   
+    #   case_form_for(@user) do |f|
+    #     f.radio(:role, :collection => [["Admin", 1], ["Author", 2], ["User", 3]])
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_admin" id="user_admin_label">Admin</label>
+    #     <input class="input" id="user_admin_1" name="user[admin]" type="radio" value="1" />
+    #     <label class="label" for="user_admin_1" id="user_admin_1_label">Admin</label>
+    #     <input class="input" id="user_admin_2" name="user[admin]" type="radio" value="2" />
+    #     <label class="label" for="user_admin_2" id="user_admin_2_label">Author</label>
+    #     <input class="input" id="user_admin_3" name="user[admin]" type="radio" value="3" />
+    #     <label class="label" for="user_admin_3" id="user_admin_3_label">User</label>
+    #   </div>
+    #
+    #   # with association class
+    #
+    #   # class User
+    #   #  belongs_to :country
+    #   # end
+    #   
+    #   case_form_for(@user) do |f|
+    #     f.radio(:country, :collection => Country, :label_method => :short_name, :value_method => :id)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <input class="input" id="user_country_id_1" name="user[country_id]" type="radio" value="1" />
+    #     <label class="label" for="user_country_id_1" id="user_country_id_1_label">Poland</label>
+    #     <input class="input" id="user_country_id_2" name="user[country_id]" type="radio" value="2" />
+    #     <label class="label" for="user_country_id_2" id="user_country_id_2_label">Germany</label>
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:checked+ - list of checked values
+    # * +:selected+ - same as +:checked+ option
+    # * +:collection+ - collection of available values
+    # * +:label_method+ - method for labels in collection
+    # * +:value_method+ - method for values in collection
+    # * +:unchecked_value+ - value for hidden input
+    # * +:allow_multiple+ - allow multiple select (add "[]" to checkbox name)
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def radio(method, options={})
       Element::RadioInput.new(self, method, options).generate
     end
     
-    # Generate number field
+    # == Number field
+    #
+    # Generate number field with input elements.
+    #
+    # == Example:
+    #
+    #   case_form_for(@user) do |f|
+    #     f.number(:age)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_age" id="user_age_label">Age</label>
+    #     <input class="input" id="user_age" name="user[age]" type="number" />
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:min+ - min value
+    # * +:max+ - max value
+    # * +:in+ - range between minimum and maximum
+    # * +:step+ - step between values
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def number(method, options={})
       Element::NumberInput.new(self, method, options.merge(:as => :number)).generate
     end
     
-    # Generate range field
+    #  == Range field
+    #
+    # Generate range field with input elements.
+    #
+    # == Example:
+    #
+    #   case_form_for(@user) do |f|
+    #     f.range(:height)
+    #   end
+    #
+    #   <div class="inputs">
+    #     <label class="label" for="user_height" id="user_height_label">Height</label>
+    #     <input class="input" id="user_height" name="user[height]" type="range" />
+    #   </div>
+    #
+    # == Allowed options:
+    # * +:id+ - HTML ID
+    # * +:class+ - HTML class
+    # * +:style+ - not recommended HTML styles (use CSS)
+    # * +:autofocus+ - HTML autofocus
+    # * +:required+ - overwrite required field
+    # * +:label+ - label options (*false* to not create)
+    # * +:hint+ - hint options (*false* to not create)
+    # * +:error+ - error options (*false* to not create)
+    # * +:min+ - min value
+    # * +:max+ - max value
+    # * +:in+ - range between minimum and maximum
+    # * +:step+ - step between values
+    # * +:readonly+ - read-only input
+    # * +:disabled+ - disable input
+    #
     def range(method, options={})
       Element::NumberInput.new(self, method, options.merge(:as => :range)).generate
     end
@@ -690,7 +1074,6 @@ module CaseForm
         when /url/      then :url
         when /phone/    then :telephone
         when /zone/     then :time_zone
-        when /_id/      then :belongs_to
         else 
           case object.column_for_attribute(method).type
           when (:string || :binary)             then :string
