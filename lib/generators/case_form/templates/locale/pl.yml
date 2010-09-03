@@ -1,0 +1,25 @@
+pl:
+  case_form:
+    yes: "Tak"
+    no: "Nie"
+    buttons:
+      # user:
+        # new: "Nowe konto"
+        # edit: "Uaktualnij"
+        # reset: "Resetuj dane"
+      new: "Utwórz"
+      edit: "Uaktualnij"
+      reset: "Resetuj"
+    errors:
+      template:
+        header_message: "Pewne błędy nie pozwalają na zapisanie obiektu"
+        message: "Błędy występują w następujących sytuacjach:"
+    hints:
+      # user:
+        # name: "Podaj imię i nazwisko"
+        # email: "Podaj poprawny email"
+    attributes:
+      # user:
+        # name: "Imię i nazwisko"
+        # email: "E-mail"
+        # password: "Hasło"

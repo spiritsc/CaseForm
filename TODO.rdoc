@@ -1,5 +1,5 @@
 TODO LIST
 * dodac GROUP_BY dla select
-* FIX zrobic testy dla collection_input
 * dodac opcje :custom dla niestandardowych atrybutow HTML date-*
 * zrobic zaawansowane opcje dla elementow complex_error, np. :header => { :tag => :div, :id => :some_id, :message => :sth }
+* f.add_association_object(:sth) dla dodawania nowych pol przy pomocy JS

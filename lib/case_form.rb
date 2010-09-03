@@ -1,7 +1,8 @@
 # coding: utf-8
 require 'action_view'
-require 'case_form/form_helper'
 require 'case_form/core_ext/sentence_error'
+require 'case_form/core_ext/form_helper'
+require 'case_form/core_ext/layout_helper'
 
 module CaseForm
   autoload :FormBuilder,  'case_form/form_builder'
@@ -11,6 +12,10 @@ module CaseForm
   autoload :Buttons,      'case_form/buttons'
   autoload :Labels,       'case_form/labels'
   autoload :Errors,       'case_form/errors'
+  
+  def self.config
+    yield self
+  end
   
   mattr_accessor :input_elements
   @@input_elements = [:label, :input, :error, :hint]

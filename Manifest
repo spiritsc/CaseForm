@@ -8,6 +8,7 @@ install.rb
 lib/case_form.rb
 lib/case_form/associations.rb
 lib/case_form/buttons.rb
+lib/case_form/core_ext/form_helper.rb
 lib/case_form/core_ext/layout_helper.rb
 lib/case_form/core_ext/sentence_error.rb
 lib/case_form/element.rb
@@ -36,10 +37,17 @@ lib/case_form/element/inputs/text_input.rb
 lib/case_form/element/label.rb
 lib/case_form/errors.rb
 lib/case_form/form_builder.rb
-lib/case_form/form_helper.rb
 lib/case_form/inputs.rb
 lib/case_form/labels.rb
 lib/case_form/version.rb
+lib/generators/case_form/install_generator.rb
+lib/generators/case_form/templates/case_form.rb
+lib/generators/case_form/templates/javascripts/jquery.case_form.js
+lib/generators/case_form/templates/javascripts/prototype.case_form.js
+lib/generators/case_form/templates/locale/en.yml
+lib/generators/case_form/templates/locale/pl.yml
+lib/generators/case_form/templates/stylesheets/stylesheet.css
+lib/generators/case_form/templates/stylesheets/stylesheet_changes.css
 rails/init.rb
 test/element/button_test.rb
 test/element/error_test.rb

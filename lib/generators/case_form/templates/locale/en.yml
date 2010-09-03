@@ -1,0 +1,25 @@
+en:
+  case_form:
+    yes: "Yes"
+    no: "No"
+    buttons:
+      # user:
+        # new: "New account"
+        # edit: "Update account"
+        # reset: "Reset"
+      new: "Create"
+      edit: "Update"
+      reset: "Reset"
+    errors:
+      template:
+        header_message: "Some errors prohibited this object from being saved"
+        message: "There were problems with the following fields:"
+    hints:
+      # user:
+        # name: "Enter your firstname and lastname"
+        # email: "Please enter valid email"
+    attributes:
+      # user:
+        # name: "Name"
+        # email: "E-mail"
+        # password: "Password"
