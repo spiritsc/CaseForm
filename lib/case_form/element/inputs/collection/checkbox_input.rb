@@ -17,9 +17,10 @@ module CaseForm
           collection.map do |element|
             label, value  = element.first, element.last
             checkbox_id   = "#{object_name}_#{specific_method}_#{value}".gsub(/]/, "").gsub(/\W/, "_").downcase
-            label_options = { :text => label, 
-                              :id => "#{checkbox_id}_label", 
-                              :for => checkbox_id}
+            label_options = { :text  => label, 
+                              :id    => "#{checkbox_id}_label", 
+                              :class => :inline_label,
+                              :for   => checkbox_id }
             
             builder.check_box(specific_method, html_options.merge(html_options_for_value(value).merge!(:id => checkbox_id)), value, options[:unchecked_value]) <<
               builder.label(specific_method, label_options)

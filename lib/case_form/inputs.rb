@@ -93,6 +93,7 @@ module CaseForm
     # 
     def attributes(*args, &block)
       options = args.extract_options!
+      options[:class] ||= :inputs
       
       fieldset = Element::Fieldset.new(self, options)
       

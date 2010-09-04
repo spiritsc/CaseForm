@@ -25,7 +25,7 @@ module CaseForm
         #
         def wrapper_options
           wrapper_options = super
-          wrapper_options[:class] << :buttons
+          wrapper_options[:class] << :element
           wrapper_options
         end
         

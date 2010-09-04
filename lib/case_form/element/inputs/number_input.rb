@@ -9,6 +9,7 @@ module CaseForm
           options[:min]  ||= input_limit(:minimum) 
           options[:max]  ||= input_limit(:maximum)
           options[:step] ||= number_step
+          options[:size] ||= CaseForm.input_size
           super
         end
         

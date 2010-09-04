@@ -1,0 +1,90 @@
+/* Default styles for CaseForm */
+
+.case_form, .case_form fieldset {
+	font-family: "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+.case_form fieldset {
+	border: none;
+}
+.case_form fieldset legend {
+	margin:0;
+	padding:0;
+	font-size: 18px;
+}
+.case_form fieldset.inputs {
+	display: block;
+}
+.case_form .element {
+	display: block;
+}
+.case_form .label {
+	display: block;
+	float: left;
+	padding-top: 0.2em;
+	width: 25%;
+	position: absolute;
+}
+.case_form .inline_label {
+	display: inline-block;
+	width: 70%;
+	padding-left: 1%;
+}
+.case_form .input {
+	margin: 0 0 0.5em 25%;
+	display: inline-block;
+}
+.case_form input, select, textarea {
+	min-width: 275px;
+}
+.case_form input[type=checkbox], input[type=radio] {
+	width: auto;
+	min-width: 0;
+}
+.case_form .error {
+	display: block;
+	margin-left: 25%;
+	color: #E41B17;
+	font-weight: bold;
+}
+.case_form .hint {
+	display: block;
+	margin-left: 25%;
+	font-style: italic;
+}
+.case_form .errors {
+	max-width: 75%;
+	padding: 0px;
+	border: 1px solid #E41B17;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, to(#FF6666), from(#FFB0B0));
+	background: -moz-linear-gradient(15% 85% 90deg,#FFB0B0, #FF6666);
+}
+.case_form .errors h2 {
+	margin: 0;
+	background: #E41B17;
+	padding: 10px;
+	color: white;
+}
+.case_form .errors p {
+	margin: 5px;
+}
+.case_form .errors ul {
+	list-style: none;
+	margin: 5px 15px;
+	padding: 0;
+}
+.case_form fieldset.buttons {
+	margin: 10px 0;
+	display: block;
+	padding-left:25%;
+}
+.case_form .button {
+	float: left;
+	width: 120px;
+	margin-right: 10px;
+}

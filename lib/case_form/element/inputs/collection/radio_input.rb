@@ -12,9 +12,10 @@ module CaseForm
           collection.map do |element|
             label, value  = element.first, element.last
             radio_id      = "#{object_name}_#{specific_method}_#{value}".gsub(/]/, "").gsub(/\W/, "_").downcase
-            label_options = { :text => label, 
-                              :id => "#{radio_id}_label", 
-                              :for => radio_id}
+            label_options = { :text  => label, 
+                              :id    => "#{radio_id}_label", 
+                              :class => :inline_label, 
+                              :for   => radio_id }
             
             builder.radio_button(specific_method, value, html_options.merge(html_options_for_value(value)).merge!(:id => radio_id)) << 
               builder.label(specific_method, label_options)
