@@ -44,8 +44,8 @@ lib/generators/case_form/install_generator.rb
 lib/generators/case_form/templates/case_form.rb
 lib/generators/case_form/templates/javascripts/jquery.case_form.js
 lib/generators/case_form/templates/javascripts/prototype.case_form.js
-lib/generators/case_form/templates/locale/en.yml
-lib/generators/case_form/templates/locale/pl.yml
+lib/generators/case_form/templates/locales/en.yml
+lib/generators/case_form/templates/locales/pl.yml
 lib/generators/case_form/templates/stylesheets/stylesheet.css
 lib/generators/case_form/templates/stylesheets/stylesheet_changes.css
 rails/init.rb
