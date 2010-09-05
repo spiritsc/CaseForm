@@ -13,7 +13,6 @@ module CaseForm
   autoload :Labels,       'case_form/labels'
   autoload :Errors,       'case_form/errors'
   
-  
   def self.config
     yield self
   end
