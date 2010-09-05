@@ -125,10 +125,10 @@ class InputTest < ActionView::TestCase
     assert_select "select", 1
   end
   
-  #test "should generate dynamic input as checkbox" do
-  #  input_case_form_for(@user, :attribute, :admin)
-  #  assert_select "input[type=checkbox]", 1
-  #end
+  test "should generate dynamic input as checkbox" do
+    input_case_form_for(@user, :attribute, :admin)
+    assert_select "input[type=checkbox]", 1
+  end
   
   test "should generate dynamic input from name as password" do
     input_case_form_for(@user, :attribute, :password_confirmation)
@@ -148,5 +148,14 @@ class InputTest < ActionView::TestCase
   test "should generate dynamic input from name as phone" do
     input_case_form_for(@user, :attribute, :mobile_phone)
     assert_select "input[type=tel]", 1
+  end
+  
+  test "should generate input with custom data (HTML attribute)" do
+    input_case_form_for(@user, :attribute, :firstname, :custom => { :foo => :bar })
+    assert_select "input[type=text][data-foo=bar]", 1
+  end
+  
+  test "should generate input with invalid custom data (HTML attribute)" do
+    assert_raise(ArgumentError) { input_case_form_for(@user, :attribute, :firstname, :custom => :foo) }
   end
 end

@@ -69,4 +69,13 @@ class HintTest < ActionView::TestCase
   test "should generate hint with wrong options" do
     assert_raise(ArgumentError) { hint_form_for(:firstname, :foo => :bar) }
   end
+  
+  test "should generate hint with custom data (HTML attribute)" do
+    hint_form_for(:firstname, :custom => { :foo => :bar })
+    assert_select "#{@tag.to_s}[data-foo=bar]", 1
+  end
+  
+  test "should generate hint with invalid custom data (HTML attribute)" do
+    assert_raise(ArgumentError) { hint_form_for(:firstname, :custom => :foo) }
+  end
 end

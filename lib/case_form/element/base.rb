@@ -2,12 +2,12 @@
 module CaseForm
   module Element
     class Base
-      HTML_OPTIONS = [:id, :class, :html, :style, :readonly, :disabled, :type, :name,
+      HTML_OPTIONS = [:id, :class, :style, :readonly, :disabled, :type, :name,
                       :autofocus, :placeholder, :required, :multiple, :checked, :selected, 
                       :for, :min, :max, :step, :pattern, :size, :maxlength, :cols, :rows]
       
       class_inheritable_accessor :allowed_options
-      self.allowed_options = [:html, :id, :class, :style]
+      self.allowed_options = [:custom, :id, :class, :style]
 
       attr_accessor :builder, :options
 
@@ -21,9 +21,7 @@ module CaseForm
         def validate_options #:nodoc same as assert_valid_keys for Hash
           allowed = self.class.allowed_options.flatten
           banned = options.keys - allowed
-          unless banned.empty?
-            raise(ArgumentError, "Unknown option(s): #{banned.join(', ')}. Available input options: #{allowed.join(', ')}")
-          end
+          raise(ArgumentError, "Unknown option(s): #{banned.join(', ')}. Available input options: #{allowed.join(', ')}") unless banned.empty?
         end
         
         def default_options
@@ -39,7 +37,15 @@ module CaseForm
         end
         
         def html_options
-          options.slice(*HTML_OPTIONS)
+          options.slice(*HTML_OPTIONS).merge(custom_options)
+        end
+        
+        def custom_options
+          custom_options = {}
+          return custom_options unless options.has_key?(:custom)
+          raise(ArgumentError, "Invalid :custom options! Custom options should be hash with key and value.") unless options[:custom].is_a?(Hash)
+          options.delete(:custom).each { |key, value| custom_options[:"data-#{key}"] = value }
+          custom_options
         end
         
         def object_name
@@ -99,10 +105,6 @@ module CaseForm
           else
             CaseForm.all_fields_required
           end
-        end
-        
-        def main_html_class
-          CaseForm.main_html_class
         end
         
         def wrapper_tag
