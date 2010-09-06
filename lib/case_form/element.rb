@@ -1,3 +1,4 @@
+# coding: utf-8
 module CaseForm
   module Element
     autoload :Base,            'case_form/element/base'
@@ -28,5 +29,7 @@ module CaseForm
     autoload :Error,           'case_form/element/error'
     autoload :SimpleError,     'case_form/element/errors/simple_error'
     autoload :ComplexError,    'case_form/element/errors/complex_error'
+    
+    autoload :Link,            'case_form/element/link'
   end
 end

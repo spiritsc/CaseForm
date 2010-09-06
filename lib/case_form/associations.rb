@@ -15,7 +15,7 @@ module CaseForm
     end
     
     def has_one(*args, &block)
-      raise("Association has_one should have a block") unless block_given?
+      raise(ArgumentError, "Association has_one should have a block") unless block_given?
       association(*args, &block)
     end
     alias_method :one, :has_one
@@ -32,6 +32,14 @@ module CaseForm
       fields_for(record_or_name_or_array, *args << options, &block)
     end
     
+    def add_object(method, options={})
+      Element::Link.new(self, method, options.merge(:as => :add)).generate
+    end
+    
+    def remove_object(method, options={})
+      Element::Link.new(self, method, options.merge(:as => :remove)).generate
+    end
+    
     private
       def specified_association
         if association = object.class.reflect_on_association(method)
@@ -41,7 +49,7 @@ module CaseForm
           when :has_many   then has_many(method, options)
           end
         else
-          raise("Unknown association! Available association macros: :belongs_to, :has_one and :has_many")
+          raise(StandardError, "Unknown association! Available association macros: :belongs_to, :has_one and :has_many")
         end
       end
   end
