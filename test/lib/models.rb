@@ -3,15 +3,16 @@ require 'ostruct'
 require 'active_model'
 
 class Column
-  attr_accessor :type, :null, :default, :limit, :precision, :scale
+  attr_accessor :name, :type, :null, :default, :limit, :precision, :scale
   
   def initialize(args)
-    @type      = args[0]
-    @null      = args[1]
-    @defalut   = args[2]
-    @limit     = args[3]
-    @precision = args[4]
-    @scale     = args[5]
+    @name      = args[0]
+    @type      = args[1]
+    @null      = args[2]
+    @default   = args[3]
+    @limit     = args[4]
+    @precision = args[5]
+    @scale     = args[6]
   end
 end
 
@@ -58,9 +59,11 @@ class User < OpenStruct
   
   undef_method :id
   
-  def self.column_names
-    ["id", "firstname", "lastname", "description", "height", "weight", 
-      "admin", "login_at", "born_at", "created_at", "updated_at"]
+  def self.content_columns
+    columns = []
+    ["firstname", "lastname", "description", "height", "weight", 
+      "admin", "login_at", "born_at", "created_at", "updated_at"].each { |c| columns << Column.new([c]) }
+    columns
   end
   
   def column_for_attribute(attribute)
@@ -91,7 +94,7 @@ class User < OpenStruct
     when :user_zone
       [:string, false]
     end
-    Column.new(args)
+    Column.new(args.unshift(attribute.to_sym))
   end
   
   def attributes
@@ -107,6 +110,15 @@ class User < OpenStruct
       return
     end
     Association.new(:macro => macro, :klass => klass)
+  end
+  
+  def build_profile
+    Profile.new(:user_id => self.id, :id => nil, :email => nil)
+  end
+  alias_method :profile, :build_profile
+  
+  def projects
+    Project.new(:user_id => self.id, :id => nil, :name => nil)
   end
 end
 
@@ -141,18 +153,60 @@ end
 class Profile < OpenStruct
   extend ActiveModel::Naming
   include ActiveModel::Conversion
+  include ActiveModel::Validations
   
-  def self.reflect_on_association(attribute = :user)
-    Association.new(:klass => User, :macro => :belongs_to)
+  def self.reflect_on_association(attribute)
+    if attribute == :user
+      Association.new(:klass => User, :macro => :belongs_to)
+    else
+      return
+    end
+  end
+  
+  def self.content_columns
+    columns = []
+    ["email"].each { |c| columns << Column.new([c]) }
+    columns
+  end
+  
+  def column_for_attribute(attribute)
+    # type, null, default, limit, precision, scale
+    args = case attribute.to_sym
+    when :id
+      [:integer, false]
+    when :user_id
+      [:integer, false]
+    when :email 
+      [:string, true, nil, 200]
+    end
+    Column.new(args.unshift(attribute.to_sym))
   end
 end
 
 class Project < OpenStruct
   extend ActiveModel::Naming
   include ActiveModel::Conversion
+  include ActiveModel::Validations
   
-  def self.reflect_on_association(attribute = :user)
-    Association.new(:macro => :belongs_to, :klass => User)
+  def self.reflect_on_association(attribute)
+    if attribute == :user
+      Association.new(:macro => :belongs_to, :klass => User)
+    else
+      return
+    end
+  end
+  
+  def column_for_attribute(attribute)
+    # type, null, default, limit, precision, scale
+    args = case attribute.to_sym
+    when :id
+      [:integer, false]
+    when :user_id
+      [:integer, false]
+    when :name 
+      [:string, true, nil, 200]
+    end
+    Column.new(args.unshift(attribute.to_sym))
   end
   
   def self.all
