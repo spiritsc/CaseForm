@@ -3,4 +3,4 @@ TODO LIST
 * zrobic zaawansowane opcje dla elementow complex_error, np. :header => { :tag => :div, :id => :some_id, :message => :sth }
 * f.add_association_object(:sth) dla dodawania nowych pol przy pomocy JS
 * placeholders w locales (HTML5)
-* f.attributes() nie pobiera kolumn asocjacyjnych
+* zbudowac srodowisko testowe na bazie ActiveRecord::Base
