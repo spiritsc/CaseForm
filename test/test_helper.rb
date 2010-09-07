@@ -26,12 +26,26 @@ class ActionView::TestCase
   
   # Generate fake models
   def generate_virtual_models
-    @user = User.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true, :description => "User note", :age => 18, :height => 188, :weight => 82.5)
-    @valid_user = ValidUser.new(:id => 1, :firstname => "John", :lastname => "Doe", :email => "john@doe.com", :admin => true, :height => 188)
-    @invalid_user = InvalidUser.new(:id => 1, :firstname => "J", :lastname => "Doe")
-    
-    # @profile = Profile.new()
-    # @project = Project.new()
+    @user = User.new(
+      :id => 1, 
+      :firstname => "John", 
+      :lastname => "Doe", 
+      :email => "john@doe.com", 
+      :admin => true, 
+      :description => "User note", 
+      :age => 18, 
+      :height => 188, 
+      :weight => 82.5)
+    @valid_user = ValidUser.new(
+      :id => 1, 
+      :firstname => "John", 
+      :lastname => "Doe", 
+      :email => "john@doe.com", 
+      :admin => true, 
+      :height => 188)
+    @invalid_user = InvalidUser.new(
+      :id => 1,
+      :firstname => "J")
   end
   
   def cf_config(key)
@@ -48,22 +62,4 @@ class ActionView::TestCase
   alias_method :user_url, :user_path
   alias_method :valid_user_path, :user_path
   alias_method :invalid_user_path, :user_path
-  
-  def countries_path(*args); '/countries'; end
-  alias_method :countries_url, :countries_path
-  
-  def country_path(c); "/countries/#{c.to_param}"; end
-  alias_method :country_url, :country_path
-  
-  def profiles_path(*args); '/profiles'; end
-  alias_method :profiles_url, :profiles_path
-  
-  def profile_path(c); "/profiles/#{c.to_param}"; end
-  alias_method :profile_url, :profile_path
-  
-  def projects_path(*args); '/projects'; end
-  alias_method :projects_url, :projects_path
-  
-  def project_path(c); "/projects/#{c.to_param}"; end
-  alias_method :project_url, :project_path
 end

@@ -5,6 +5,10 @@ class FieldsetTest < ActionView::TestCase
     concat(case_form_for(object) { |f| f.send(method, options) })
   end
   
+  def fieldset_case_fields_for(object, method, attribute, options={})
+    concat(case_form_for(object) { |f| f.send(method, attribute, options) })
+  end
+  
   test "should generate fieldset for attributes" do
     fieldset_case_form_for(@user, :attributes)
     assert_select "fieldset", :count => 1
@@ -22,8 +26,14 @@ class FieldsetTest < ActionView::TestCase
     assert_select "legend", :count => 1, :text => legend
   end
   
-  def fieldset_case_fields_for(object, method, attribute, options={})
-    concat(case_form_for(object) { |f| f.send(method, attribute, options) })
+  test "should generate fieldset for :case_fields_for and :belongs_to association" do
+    concat(case_form_for(@user) { |f| f.case_fields_for(:country, @user.country) { |p| p.attribute(:name) } })
+    assert_select "fieldset", 1
+  end
+  
+  test "should generate fieldset for :belongs_to association" do
+    concat(case_form_for(@user) { |f| f.association(:country, @user.country) { |p| p.attribute(:name) } })
+    assert_select "fieldset", 1
   end
   
   test "should generate fieldset for :case_fields_for and :has_one association" do
