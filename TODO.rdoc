@@ -1,6 +1,9 @@
-TODO LIST
+== TODO LIST
 * dodac GROUP_BY dla select
 * zrobic zaawansowane opcje dla elementow complex_error, np. :header => { :tag => :div, :id => :some_id, :message => :sth }
-* f.add_association_object(:sth) dla dodawania nowych pol przy pomocy JS
+* f.add_object(:sth) dla dodawania nowych pol przy pomocy JS
 * placeholders w locales (HTML5)
-* zbudowac srodowisko testowe na bazie ActiveRecord::Base
+* napisac do konca dokumentacje dla metod
+* napisac README
+* wykasowac niepotrzebne pliki (intall.rb, uninstall.rb)
+* przegotowac uninstall_case_form
