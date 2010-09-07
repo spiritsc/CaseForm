@@ -1,6 +1,6 @@
 module CaseForm
   module Generators
-    class UninstallGenerator < Rails::Generator::Base
+    class UninstallGenerator < Rails::Generators::Base
       desc "Delete all CaseForm files..."
       class_option :config,      :type => :boolean, :default => true, :desc => "Delete CaseForm config file..."
       class_option :stylesheets, :type => :boolean, :default => true, :desc => "Delete stylesheet files..."
