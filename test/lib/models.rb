@@ -22,16 +22,16 @@ class Country < OpenStruct
   extend ActiveModel::Naming
   include ActiveModel::Conversion
   
-  def self.reflect_on_association(attribute = :users)
-    Association.new(:klass => User, :macro => :has_many)
+  def self.reflect_on_association(attribute)
+    attribute == :users ? Association.new(:klass => User, :macro => :has_many) : return
   end
   
   def self.all
-    [Country.new(:id => 1, :name => "Poland"), 
-     Country.new(:id => 2, :name => "Germany"),
-     Country.new(:id => 3, :name => "France"),
-     Country.new(:id => 4, :name => "Spain"),
-     Country.new(:id => 5, :name => "US")]
+    [new(:id => 1, :name => "Poland"), 
+     new(:id => 2, :name => "Germany"),
+     new(:id => 3, :name => "France"),
+     new(:id => 4, :name => "Spain"),
+     new(:id => 5, :name => "US")]
   end
   
   def self.priority
@@ -55,7 +55,8 @@ class User < OpenStruct
   attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_phone, :birthday_at, :user_zone
   alias_method :birthday_on, :birthday_at
   
-  attr_accessor :id, :country_id
+  attr_accessor :id
+  attr_accessor :country_id # AKA belongs_to :country
   
   undef_method :id
   
@@ -112,10 +113,9 @@ class User < OpenStruct
     Association.new(:macro => macro, :klass => klass)
   end
   
-  def build_profile
+  def profile
     Profile.new(:user_id => self.id, :id => nil, :email => nil)
   end
-  alias_method :profile, :build_profile
   
   def projects
     Project.new(:user_id => self.id, :id => nil, :name => nil)
@@ -156,11 +156,7 @@ class Profile < OpenStruct
   include ActiveModel::Validations
   
   def self.reflect_on_association(attribute)
-    if attribute == :user
-      Association.new(:klass => User, :macro => :belongs_to)
-    else
-      return
-    end
+    attribute == :user ? Association.new(:klass => User, :macro => :belongs_to) : return
   end
   
   def self.content_columns
@@ -189,11 +185,7 @@ class Project < OpenStruct
   include ActiveModel::Validations
   
   def self.reflect_on_association(attribute)
-    if attribute == :user
-      Association.new(:macro => :belongs_to, :klass => User)
-    else
-      return
-    end
+    attribute == :user ? Association.new(:macro => :belongs_to, :klass => User) : return
   end
   
   def column_for_attribute(attribute)
