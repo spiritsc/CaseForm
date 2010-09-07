@@ -53,10 +53,13 @@ module CaseForm
         end
         
         def extract_from_association_array(array)
-          sample = array.first
-          label_method ||= options[:label_method] || collection_methods(:label, sample)
-          value_method ||= options[:value_method] || collection_methods(:value, sample)
-          array.map { |o| [o.send(label_method), o.send(value_method)] }
+          if sample = array.first
+            label_method ||= options[:label_method] || collection_methods(:label, sample)
+            value_method ||= options[:value_method] || collection_methods(:value, sample)
+            array.map { |o| [o.send(label_method), o.send(value_method)] }
+          else
+            [[I18n.t(:"case_form.no_items", :default => "No #{sample.class.to_s.pluralize}"), '']]
+          end
         end
         
         def collection_methods(type, sample)

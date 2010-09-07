@@ -150,6 +150,10 @@ class InputTest < ActionView::TestCase
     assert_select "input[type=tel]", 1
   end
   
+  test "should generate input with invalid options" do
+    assert_raise(ArgumentError) { input_case_form_for(@user, :attribute, :firstname, :foo => :bar) }
+  end
+  
   test "should generate input with custom data (HTML attribute)" do
     input_case_form_for(@user, :attribute, :firstname, :custom => { :foo => :bar })
     assert_select "input[type=text][data-foo=bar]", 1

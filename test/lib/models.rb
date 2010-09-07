@@ -3,34 +3,76 @@ require 'ostruct'
 require 'active_model'
 
 class Column
-  attr_accessor :type, :null, :default, :limit, :precision, :scale
+  attr_accessor :name, :type, :null, :default, :limit, :precision, :scale
   
-  def initialize(args)
-    @type      = args[0]
-    @null      = args[1]
-    @defalut   = args[2]
-    @limit     = args[3]
-    @precision = args[4]
-    @scale     = args[5]
+  def initialize(*args)
+    @name      = args[0]
+    @type      = args[1]
+    @null      = args[2]
+    @default   = args[3]
+    @limit     = args[4]
+    @precision = args[5]
+    @scale     = args[6]
   end
 end
 
-class Association < OpenStruct; end
+class Association
+  attr_accessor :klass, :macro
+  
+  def initialize(*args)
+    @klass = args[0].constantize
+    @macro = args[1]
+  end
+end
 
-class Country < OpenStruct
+class BaseModel < OpenStruct
   extend ActiveModel::Naming
   include ActiveModel::Conversion
+  include ActiveModel::Validations
   
-  def self.reflect_on_association(attribute = :users)
-    Association.new(:klass => User, :macro => :has_many)
+  class_inheritable_accessor :associations, :all_columns, :all_content_columns
+  # columns: type, null, default, limit, precision, scale
+  
+  def self.reflect_on_association(attribute)
+    association = self.associations[attribute.to_sym]
+    return unless association
+    Association.new(*association)
   end
   
+  def self.columns
+    columns = []
+    self.all_columns.each { |col| columns << Column.new(*col) }
+    columns
+  end
+  
+  def self.content_columns
+    columns = []
+    self.all_content_columns.each { |col| columns << Column.new(*col) }
+    columns
+  end
+  
+  def column_for_attribute(attribute)
+    args = [attribute.to_sym, self.all_columns[attribute.to_sym]].flatten
+    Column.new(*args)
+  end
+end
+
+class Country < BaseModel
+  self.associations = { 
+    :users    => ["User", :has_many]
+  }
+  self.all_columns = {
+    :id       => [:integer, false],
+    :name     => [:string, false, nil, 250]
+  }
+  self.all_content_columns = self.all_columns.keys - [:id]
+  
   def self.all
-    [Country.new(:id => 1, :name => "Poland"), 
-     Country.new(:id => 2, :name => "Germany"),
-     Country.new(:id => 3, :name => "France"),
-     Country.new(:id => 4, :name => "Spain"),
-     Country.new(:id => 5, :name => "US")]
+    [new(:id => 1, :name => "Poland"), 
+     new(:id => 2, :name => "Germany"),
+     new(:id => 3, :name => "France"),
+     new(:id => 4, :name => "Spain"),
+     new(:id => 5, :name => "US")]
   end
   
   def self.priority
@@ -46,71 +88,56 @@ class Country < OpenStruct
   end
 end
 
-class User < OpenStruct
-  extend ActiveModel::Naming
-  include ActiveModel::Conversion
-  include ActiveModel::Validations
+class User < BaseModel
+  self.associations = { 
+    :country    => [ "Country", :belongs_to],
+    :profile    => [ "Profile", :has_one],
+    :projects   => [ "Project", :has_many]
+  }
+  self.all_columns = {
+    :id          => [:integer, false],
+    :country_id  => [:integer, false],
+    :firstname   => [:string, true, "Enter firstname", 200],
+    :lastname    => [:string, false, nil, 250],
+    :description => [:text, true],
+    :created_at  => [:datetime, true],
+    :updated_at  => [:datetime, true],
+    :login_at    => [:timestamp, true],
+    :born_at     => [:date, true],
+    :admin       => [:boolean, false],
+    :height      => [:decimal, false, nil, 10, 5, 3],
+    :weight      => [:float, false],
+    :age         => [:integer, false],
+    :user_zone   => [:string, false]
+  }
+  self.all_content_columns = self.all_columns.keys - [:id, :country_id]
   
   attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_phone, :birthday_at, :user_zone
   alias_method :birthday_on, :birthday_at
   
-  attr_accessor :id, :country_id
+  attr_accessor :id
+  attr_accessor :country_id # AKA belongs_to :country
   
   undef_method :id
   
-  def self.column_names
-    ["id", "firstname", "lastname", "description", "height", "weight", 
-      "admin", "login_at", "born_at", "created_at", "updated_at"]
+  def country
+    Country.new(:user_id => self.id, :id => nil, :name => "Poland")
   end
   
-  def column_for_attribute(attribute)
-    # type, null, default, limit, precision, scale
-    args = case attribute.to_sym
-    when :id
-      [:integer, false]
-    when :firstname 
-      [:string, true, "Enter firstname", 200]
-    when :lastname
-      [:string, false, nil, 250]
-    when :description 
-      [:text, true]
-    when (:created_at || :updated_at)
-      [:datetime, true]
-    when :login_at
-      [:timestamp, true]
-    when :born_at
-      [:date, true]
-    when :admin
-      [:boolean, false]
-    when :height
-      [:decimal, false, nil, 10, 5, 3]
-    when :weight
-      [:float, false]
-    when :age
-      [:integer, false]
-    when :user_zone
-      [:string, false]
-    end
-    Column.new(args)
+  def profile
+    Profile.new(:user_id => self.id, :id => nil, :email => nil)
   end
   
-  def attributes
-    instance_variable_get(:@table)
-  end
-  
-  def self.reflect_on_association(attribute)
-    macro, klass = case attribute
-    when :profile  then [:has_one, Profile]
-    when :projects then [:has_many, Project]
-    when :country  then [:belongs_to, Country]
-    else
-      return
-    end
-    Association.new(:macro => macro, :klass => klass)
+  def projects
+    Project.new(:user_id => self.id, :id => nil, :name => nil)
   end
 end
 
 class ValidUser < User
+  self.associations = User.associations
+  self.all_columns = User.all_columns
+  self.all_content_columns = User.all_content_columns
+  
   validates :firstname, :length => {:minimum => 3, :maximum => 40}, :presence => true
   validates :lastname, :email, :presence => true
   
@@ -123,7 +150,9 @@ class ValidUser < User
 end
 
 class InvalidUser < User
-  extend ActiveModel::Translation
+  self.associations = User.associations
+  self.all_columns = User.all_columns
+  self.all_content_columns = User.all_content_columns
   
   attr_reader :errors
   
@@ -138,22 +167,28 @@ class InvalidUser < User
   end
 end
 
-class Profile < OpenStruct
-  extend ActiveModel::Naming
-  include ActiveModel::Conversion
-  
-  def self.reflect_on_association(attribute = :user)
-    Association.new(:klass => User, :macro => :belongs_to)
-  end
+class Profile < BaseModel
+  self.associations = { 
+    :users    => [ "User", :belongs_to]
+  }
+  self.all_columns = {
+    :id       => [:integer, false],
+    :user_id  => [:integer, false],
+    :name     => [:string, false, nil, 250]
+  }
+  self.all_content_columns = self.all_columns.keys - [:id, :user_id]
 end
 
-class Project < OpenStruct
-  extend ActiveModel::Naming
-  include ActiveModel::Conversion
-  
-  def self.reflect_on_association(attribute = :user)
-    Association.new(:macro => :belongs_to, :klass => User)
-  end
+class Project < BaseModel
+  self.associations = { 
+    :users    => [ "User", :belongs_to ]
+  }
+  self.all_columns = {
+    :id       => [:integer, false],
+    :user_id  => [:integer, false],
+    :name     => [:string, false, nil, 250]
+  }
+  self.all_content_columns = self.all_columns.keys - [:id, :user_id]
   
   def self.all
     all = []

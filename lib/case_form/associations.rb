@@ -6,7 +6,7 @@ module CaseForm
         case_fields_for(*args, &block)
       else
         options = args.extract_options!
-        specified_association(method, options)
+        specified_association(*args, options)
       end
     end
     
@@ -15,7 +15,7 @@ module CaseForm
     end
     
     def has_one(*args, &block)
-      raise(ArgumentError, "Association has_one should have a block") unless block_given?
+      raise(ArgumentError, "Association :has_one should be used with block") unless block_given?
       association(*args, &block)
     end
     alias_method :one, :has_one
@@ -29,7 +29,7 @@ module CaseForm
     def case_fields_for(record_or_name_or_array, *args, &block)
       options = args.extract_options!
       options[:builder] = CaseForm::FormBuilder
-      fields_for(record_or_name_or_array, *args << options, &block)
+      Element::Fieldset.new(self, :class => :inputs).generate(fields_for(record_or_name_or_array, *args << options, &block))
     end
     
     def add_object(method, options={})
@@ -41,15 +41,12 @@ module CaseForm
     end
     
     private
-      def specified_association
+      def specified_association(*args, options)
+        method = args.shift
         if association = object.class.reflect_on_association(method)
-          case association.macro
-          when :belongs_to then belongs_to(method, options)
-          when :has_one    then has_one(method, options)
-          when :has_many   then has_many(method, options)
-          end
+          send(association.macro, method, options)
         else
-          raise(StandardError, "Unknown association! Available association macros: :belongs_to, :has_one and :has_many")
+          raise(ArgumentError, "Unknown association! Available association macros: :belongs_to, :has_many and :has_one (only with defined block)")
         end
       end
   end

@@ -100,7 +100,7 @@ module CaseForm
       if block_given?
         fieldset.generate(&block)
       else
-        args  = object.class.column_names if args.empty?
+        args  = object.class.content_columns.map(&:name) if args.empty?
         args -= CaseForm.locked_columns.collect! { |c| c.to_s }
         fieldset.generate(args.collect { |a| attribute(a) })
       end
