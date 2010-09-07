@@ -48,9 +48,9 @@ lib/generators/case_form/templates/locales/en.yml
 lib/generators/case_form/templates/locales/pl.yml
 lib/generators/case_form/templates/stylesheets/stylesheet.css
 lib/generators/case_form/templates/stylesheets/stylesheet_changes.css
+lib/generators/case_form/uninstall_generator.rb
 rails/init.rb
 test/element/button_test.rb
-test/element/error_test.rb
 test/element/errors/complex_error_test.rb
 test/element/errors/simple_error_test.rb
 test/element/fieldset_test.rb
