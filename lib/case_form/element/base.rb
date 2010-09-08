@@ -25,7 +25,7 @@ module CaseForm
         end
         
         def default_options
-          options         ||= []
+          options         ||= {}
           options[:class] ||= []
           options[:id]    ||= []
         end
@@ -50,6 +50,10 @@ module CaseForm
         
         def object_name
           @builder.object_name
+        end
+        
+        def sanitized_object_name
+          object_name.gsub(/\]\[|[^-a-zA-Z0-9:.]/, "_").sub(/_$/, "")
         end
 
         def object

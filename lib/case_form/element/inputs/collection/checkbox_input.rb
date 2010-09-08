@@ -16,7 +16,7 @@ module CaseForm
         def input
           collection.map do |element|
             label, value  = element.first, element.last
-            checkbox_id   = "#{object_name}_#{specific_method}_#{value}".gsub(/]/, "").gsub(/\W/, "_").downcase
+            checkbox_id   = "#{sanitized_object_name}_#{specific_method}_#{value}"
             label_options = { :text  => label, 
                               :id    => "#{checkbox_id}_label", 
                               :class => :inline_label,

@@ -1,27 +1,26 @@
 # coding: utf-8
 module CaseForm
   module Associations
-    def association(*args, &block)
-      if block_given?
-        case_fields_for(*args, &block)
+    def association(method, *args, &block)
+      if association = object.class.reflect_on_association(method)
+        send(association.macro, method, *args, &block)
       else
-        options = args.extract_options!
-        specified_association(*args, options)
+        raise(ArgumentError, "Unknown association! Available association macros: :belongs_to, :has_many and :has_one (only with defined block)")
       end
     end
     
-    def belongs_to(method, options={})
-      options[:as] ? send(options.delete(:as)) : select(method, options)
+    def belongs_to(method, *args, &block)
+      Element::OneToOneAssociation.new(self, method, *args).generate(&block)
     end
     
-    def has_one(*args, &block)
+    def has_one(method, *args, &block)
       raise(ArgumentError, "Association :has_one should be used with block") unless block_given?
-      association(*args, &block)
+      Element::OneToOneAssociation.new(self, method, *args).generate(&block)
     end
     alias_method :one, :has_one
     
-    def has_many(method, options={})
-      options[:as] ? send(options.delete(:as)) : checkbox(method, options)
+    def has_many(method, *args, &block)
+      Element::CollectionAssociation.new(self, method, *args).generate(&block)
     end
     alias_method :many, :has_many
     alias_method :habtm, :has_many
@@ -29,25 +28,14 @@ module CaseForm
     def case_fields_for(record_or_name_or_array, *args, &block)
       options = args.extract_options!
       options[:builder] = CaseForm::FormBuilder
-      Element::Fieldset.new(self, :class => :inputs).generate(fields_for(record_or_name_or_array, *args << options, &block))
-    end
-    
-    def add_object(method, options={})
-      Element::Link.new(self, method, options.merge(:as => :add)).generate
-    end
-    
-    def remove_object(method, options={})
-      Element::Link.new(self, method, options.merge(:as => :remove)).generate
+      fields_for(record_or_name_or_array, *(args << options), &block)
     end
     
     private
-      def specified_association(*args, options)
-        method = args.shift
-        if association = object.class.reflect_on_association(method)
-          send(association.macro, method, options)
-        else
-          raise(ArgumentError, "Unknown association! Available association macros: :belongs_to, :has_many and :has_one (only with defined block)")
-        end
+      # Add HTML div for each associated object
+      #
+      def fields_for_nested_model(name, object, options, block)
+        @template.content_tag(:div, super, :class => :association_inputs)
       end
   end
 end

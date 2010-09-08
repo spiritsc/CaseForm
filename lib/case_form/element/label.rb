@@ -23,7 +23,7 @@ module CaseForm
         #
         def default_options
           options[:class] ||= [:label]
-          options[:id]    ||= "#{object_name}_#{specific_method}_label"
+          options[:id]    ||= "#{sanitized_object_name}_#{specific_method}_label"
         end
         
         # Generate label text with optional required symbol.

@@ -90,9 +90,10 @@ end
 
 class User < BaseModel
   self.associations = { 
-    :country    => [ "Country", :belongs_to],
-    :profile    => [ "Profile", :has_one],
-    :projects   => [ "Project", :has_many]
+    :country          => [ "Country", :belongs_to],
+    :profile          => [ "Profile", :has_one],
+    :projects         => [ "Project", :has_many],
+    :special_projects => [ "Project", :has_many]
   }
   self.all_columns = {
     :id          => [:integer, false],
@@ -124,12 +125,23 @@ class User < BaseModel
     Country.new(:user_id => self.id, :id => nil, :name => "Poland")
   end
   
+  def country_attributes=(*); end;
+  
   def profile
     Profile.new(:user_id => self.id, :id => nil, :email => nil)
   end
   
+  def profile_attributes=(*); end;
+  
   def projects
-    Project.new(:user_id => self.id, :id => nil, :name => nil)
+    [Project.new(:user_id => self.id, :id => 1, :name => nil, :address => nil),
+     Project.new(:user_id => self.id, :id => 2, :name => nil, :address => nil)]
+  end
+  
+  def projects_attributes=(*); end;
+  
+  def special_projects
+    Project.extra
   end
 end
 
@@ -186,7 +198,8 @@ class Project < BaseModel
   self.all_columns = {
     :id       => [:integer, false],
     :user_id  => [:integer, false],
-    :name     => [:string, false, nil, 250]
+    :name     => [:string, false, nil, 250],
+    :address  => [:string, false]
   }
   self.all_content_columns = self.all_columns.keys - [:id, :user_id]
   
