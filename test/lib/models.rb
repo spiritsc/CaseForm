@@ -55,6 +55,14 @@ class BaseModel < OpenStruct
     args = [attribute.to_sym, self.all_columns[attribute.to_sym]].flatten
     Column.new(*args)
   end
+  
+  def persisted?
+    true
+  end
+  
+  def _destroy
+    false
+  end
 end
 
 class Country < BaseModel
@@ -93,7 +101,8 @@ class User < BaseModel
     :country          => [ "Country", :belongs_to],
     :profile          => [ "Profile", :has_one],
     :projects         => [ "Project", :has_many],
-    :special_projects => [ "Project", :has_many]
+    :special_projects => [ "Project", :has_many],
+    :des_projects     => [ "Project", :has_many]
   }
   self.all_columns = {
     :id          => [:integer, false],
@@ -121,6 +130,12 @@ class User < BaseModel
   
   undef_method :id
   
+  def self.nested_attributes_options(association)
+    options = { :allow_destroy => false, :update_only => false }
+    options[:allow_destroy] = true if association == :projects
+    options
+  end
+  
   def country
     Country.new(:user_id => self.id, :id => nil, :name => "Poland")
   end
@@ -137,8 +152,10 @@ class User < BaseModel
     [Project.new(:user_id => self.id, :id => 1, :name => nil, :address => nil),
      Project.new(:user_id => self.id, :id => 2, :name => nil, :address => nil)]
   end
+  alias_method :des_projects, :projects
   
   def projects_attributes=(*); end;
+  alias_method :des_projects_attributes=, :projects_attributes=
   
   def special_projects
     Project.extra
@@ -211,5 +228,9 @@ class Project < BaseModel
   
   def self.extra
     self.all[1..3]
+  end
+  
+  def _destroy
+    false
   end
 end

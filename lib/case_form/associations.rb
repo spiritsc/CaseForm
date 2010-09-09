@@ -2,25 +2,23 @@
 module CaseForm
   module Associations
     def association(method, *args, &block)
-      if association = object.class.reflect_on_association(method)
-        send(association.macro, method, *args, &block)
-      else
-        raise(ArgumentError, "Unknown association! Available association macros: :belongs_to, :has_many and :has_one (only with defined block)")
-      end
+      validate_association_method(method)
+      send(object_association(method).macro, method, *args, &block)
     end
     
     def belongs_to(method, *args, &block)
-      Element::OneToOneAssociation.new(self, method, *args).generate(&block)
+      nested_attributes?(method, *args, &block) ? Element::Association.new(self, method, *args).generate(&block) : association_input(method, *args)
     end
     
     def has_one(method, *args, &block)
       raise(ArgumentError, "Association :has_one should be used with block") unless block_given?
-      Element::OneToOneAssociation.new(self, method, *args).generate(&block)
+      validate_association_method(method)
+      Element::Association.new(self, method, *args).generate(&block)
     end
     alias_method :one, :has_one
     
     def has_many(method, *args, &block)
-      Element::CollectionAssociation.new(self, method, *args).generate(&block)
+      nested_attributes?(method, *args, &block) ? Element::Association.new(self, method, *args).generate(&block) : association_input(method, *args)
     end
     alias_method :many, :has_many
     alias_method :habtm, :has_many
@@ -31,11 +29,56 @@ module CaseForm
       fields_for(record_or_name_or_array, *(args << options), &block)
     end
     
+    def remove_object(text)
+      hidden_field(:_destroy) + @template.link_to(text, "javascript:void(0)", :remote => true, :"data-action" => :remove)
+    end
+    
     private
-      # Add HTML div for each associated object
-      #
+      def validate_association_method(method)
+        raise(ArgumentError, ":#{method} method does not look like association method.") unless object_association(method)
+      end
+      
+      def nested_attributes?(method, *args, &block)
+        validate_association_method(method)
+        case
+        when args.extract_options!.has_key?(:as) then false
+        when block_given?                        then true
+        else
+          accept_nested_attributes_defined?(method)
+        end
+      end
+      
+      def accept_nested_attributes_defined?(method)
+        object.respond_to?(:"#{method}_attributes=")
+      end
+      
+      def association_input(method, *args)
+        options = args.extract_options!
+        input   = options.has_key?(:as) ? options.delete(:as) : (object_association(method).macro == :has_many ? :checkbox : :select)
+        send(input, method, options)
+      end
+      
+      def object_association(method)
+        object.class.reflect_on_association(method) if object.class.respond_to?(:reflect_on_association)
+      end
+      
       def fields_for_nested_model(name, object, options, block)
-        @template.content_tag(:div, super, :class => :association_inputs)
+        object = object.to_model if object.respond_to?(:to_model)
+        allow_destroy = options[:allow_destroy]
+        destroy_text  = options[:destroy_text]
+        
+        nested_model = if object.persisted?
+          @template.fields_for(name, object, options) do |builder|
+            content = []
+            content << block.call(builder)
+            content << builder.hidden_field(:id) unless builder.emitted_hidden_id?
+            content << builder.remove_object(destroy_text) if allow_destroy
+            @template.concat content.join.html_safe
+          end
+        else
+          @template.fields_for(name, object, options, &block)
+        end
+        @template.content_tag(:div, nested_model, :class => :association_inputs)
       end
   end
 end

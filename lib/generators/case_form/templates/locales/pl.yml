@@ -2,6 +2,9 @@ pl:
   case_form:
     yes: "Tak"
     no: "Nie"
+    nested_attributes:
+      destroy: "Usuń {{model}}"
+      create: "Utwórz {{model}}"
     buttons:
       # user:
         # new: "Nowe konto"

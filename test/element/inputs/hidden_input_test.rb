@@ -8,6 +8,6 @@ class HiddenInputTest < ActionView::TestCase
   
   test "should generate hidden input" do
     hidden_case_form_for(@user, :firstname)
-    assert_select "input[type=hidden]", 2 # +1 _utf
+    assert_select "input[type=hidden]", 3 # +1 _utf and _method
   end
 end

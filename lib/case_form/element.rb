@@ -31,7 +31,5 @@ module CaseForm
     autoload :ComplexError,          'case_form/element/errors/complex_error'
     
     autoload :Association,           'case_form/element/association'
-    autoload :OneToOneAssociation,   'case_form/element/associations/one_to_one_association'
-    autoload :CollectionAssociation, 'case_form/element/associations/collection_association'
   end
 end

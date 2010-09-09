@@ -8,7 +8,8 @@ class ButtonTest < ActionView::TestCase
   test "should generate all buttons" do
     buttons_case_form_for
     assert_select "fieldset", 1
-    assert_select "input", 3 # +1 _snowman
+    assert_select "input[type=submit]", 1
+    assert_select "input[type=reset]", 1
   end
   
   test "should generate buttons from args" do
