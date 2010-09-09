@@ -4,7 +4,6 @@ Manifest
 README.rdoc
 Rakefile
 TODO.rdoc
-install.rb
 lib/case_form.rb
 lib/case_form/associations.rb
 lib/case_form/buttons.rb
@@ -12,6 +11,7 @@ lib/case_form/core_ext/form_helper.rb
 lib/case_form/core_ext/layout_helper.rb
 lib/case_form/core_ext/sentence_error.rb
 lib/case_form/element.rb
+lib/case_form/element/association.rb
 lib/case_form/element/base.rb
 lib/case_form/element/button.rb
 lib/case_form/element/error.rb
@@ -50,6 +50,7 @@ lib/generators/case_form/templates/stylesheets/stylesheet.css
 lib/generators/case_form/templates/stylesheets/stylesheet_changes.css
 lib/generators/case_form/uninstall_generator.rb
 rails/init.rb
+test/element/association_test.rb
 test/element/button_test.rb
 test/element/errors/complex_error_test.rb
 test/element/errors/simple_error_test.rb
@@ -74,4 +75,3 @@ test/form_builder_test.rb
 test/form_helper_test.rb
 test/lib/models.rb
 test/test_helper.rb
-uninstall.rb
