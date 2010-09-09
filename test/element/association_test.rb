@@ -57,7 +57,7 @@ class AssociationTest < ActionView::TestCase
   end
   
   test "should generate nasted inputs for association with remove links from model options" do
-    concat(case_form_for(@user) { |f| f.association(:projects) { |c| c.attribute(:name) } })
+    puts concat(case_form_for(@user) { |f| f.association(:projects) { |c| c.attribute(:name) } })
     assert_select "fieldset", 1
     assert_select "div.association_inputs", 2
     assert_select "a[data-action=remove]", 2
@@ -81,7 +81,7 @@ class AssociationTest < ActionView::TestCase
     concat(case_form_for(@user) { |f| f.association(:projects, :destroy_text => "Usun") { |c| c.attribute(:name) } })
     assert_select "fieldset", 1
     assert_select "div.association_inputs", 2
-    assert_select "a[data-action=remove]", 'Usun'
+    assert_select "a[data-action=remove]", :count => 2, :text => 'Usun'
   end
   
   test "should generate nasted inputs for one to one association without remove links from model options" do

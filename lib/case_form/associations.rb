@@ -67,18 +67,19 @@ module CaseForm
         allow_destroy = options[:allow_destroy]
         destroy_text  = options[:destroy_text]
         
-        nested_model = if object.persisted?
-          @template.fields_for(name, object, options) do |builder|
-            content = []
-            content << block.call(builder)
-            content << builder.hidden_field(:id) unless builder.emitted_hidden_id?
-            content << builder.remove_object(destroy_text) if allow_destroy
-            @template.concat content.join.html_safe
+        @template.content_tag(:div, nil, :class => :association_inputs) do
+          if object.persisted?
+            output = ActiveSupport::SafeBuffer.new
+            @template.fields_for(name, object, options) do |builder|
+              output << block.call(builder)
+              output << builder.hidden_field(:id) unless builder.emitted_hidden_id?
+              output << builder.remove_object(destroy_text) if allow_destroy
+            end
+            output
+          else
+            @template.fields_for(name, object, options, &block)
           end
-        else
-          @template.fields_for(name, object, options, &block)
         end
-        @template.content_tag(:div, nested_model, :class => :association_inputs)
       end
   end
 end
