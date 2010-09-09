@@ -130,9 +130,10 @@ class User < BaseModel
   
   undef_method :id
   
-  def self.nested_attributes_options(association)
-    options = { :allow_destroy => false, :update_only => false }
-    options[:allow_destroy] = true if association == :projects
+  def self.nested_attributes_options
+    options = {}
+    self.associations.keys.each { |a| options[a] = { :allow_destroy => false, :update_only => false } }
+    options[:projects][:allow_destroy] = true
     options
   end
   

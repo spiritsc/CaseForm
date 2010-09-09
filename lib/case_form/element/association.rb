@@ -45,15 +45,11 @@ module CaseForm
           object.respond_to?(:"#{method}_attributes=")
         end
         
-        def nested_attributes_options
-          object.class.nested_attributes_options(method.to_sym) if object.class.respond_to?(:nested_attributes_options)
-        end
-        
         def allow_destroy?
           if options.has_key?(:allow_destroy)
             options[:allow_destroy]
           else
-            association_type?(:has_many) ? nested_attributes_options[:allow_destroy] : false
+            association_type?(:has_many) ? object.class.nested_attributes_options[method.to_sym][:allow_destroy] : false
           end
         end
         
