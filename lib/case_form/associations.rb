@@ -29,8 +29,8 @@ module CaseForm
       fields_for(record_or_name_or_array, *(args << options), &block)
     end
     
-    def remove_object(text)
-      hidden_field(:_destroy) + @template.link_to(text, "javascript:void(0)", :remote => true, :"data-action" => :remove)
+    def remove_object(text, options={})
+      hidden_field(:_destroy) + @template.link_to(text, "javascript:void(0)", :remote => true, :"data-action" => :remove, :"data-association" => options[:"data-association"])
     end
     
     private
@@ -67,15 +67,12 @@ module CaseForm
         allow_destroy = options[:allow_destroy]
         destroy_text  = options[:destroy_text]
         
-        @template.content_tag(:div, nil, :class => :association_inputs) do
+        @template.content_tag(:div, nil, :class => "#{options[:"data-association"]}_association_inputs") do
           if object.persisted?
-            output = ActiveSupport::SafeBuffer.new
             @template.fields_for(name, object, options) do |builder|
-              output << block.call(builder)
-              output << builder.hidden_field(:id) unless builder.emitted_hidden_id?
-              output << builder.remove_object(destroy_text) if allow_destroy
+              block.call(builder)
+              @template.concat((builder.hidden_field(:id) unless builder.emitted_hidden_id?) + (builder.remove_object(destroy_text, options) if allow_destroy))
             end
-            output
           else
             @template.fields_for(name, object, options, &block)
           end

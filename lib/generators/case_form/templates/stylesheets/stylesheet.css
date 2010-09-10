@@ -89,6 +89,5 @@
 	margin-right: 10px;
 }
 a[data-action=remove] {
-	display: block;
 	margin: -5px 0 15px 25%;
 }

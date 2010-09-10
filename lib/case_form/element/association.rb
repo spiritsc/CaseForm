@@ -2,7 +2,7 @@
 module CaseForm
   module Element
     class Association < Base
-      self.allowed_options << [:allow_destroy, :destroy_text, :allow_create, :create_text]
+      self.allowed_options << [:allow_destroy, :destroy_text, :allow_create, :create_text, :fields]
       
       attr_accessor :method
       
@@ -19,10 +19,11 @@ module CaseForm
       private
         def default_options
           super
-          options[:allow_destroy]  = allow_destroy? # FIXME why ||= don't work
-          options[:allow_create]   = allow_create?
-          options[:destroy_text] ||= destroy_text
-          options[:create_text]  ||= create_text
+          options[:allow_destroy]      = allow_destroy? # FIXME why ||= don't work
+          options[:allow_create]       = allow_create?
+          options[:destroy_text]     ||= destroy_text
+          options[:create_text]      ||= create_text
+          options[:"data-association"] = method
         end
       
         def nested_association(&block)
@@ -36,8 +37,11 @@ module CaseForm
         
         def nested_association_content(&block)
           content = []
-          content << builder.case_fields_for(method, options, &block)
-          content << create_link if options.delete(:allow_create)
+          content << builder.case_fields_for(method, (new_model_object if new?), options, &block)
+          if options.delete(:allow_create)
+            content << builder.case_fields_for(method, new_model_object, options, &block) unless new?
+            content << create_link(&block)
+          end
           content
         end
         
@@ -65,8 +69,13 @@ module CaseForm
           I18n.t(:"case_form.nested_attributes.create", :model => singularize_model_name, :default => "Add #{singularize_model_name}")
         end
         
-        def create_link
-          template.link_to(options.delete(:create_text), "javascript:void(0)", :remote => true, :"data-association" => method, :"data-action" => :add)
+        def create_link(&block)
+          template.link_to(options.delete(:create_text), "javascript:void(0)", 
+                          :remote => true, :"data-association" => method, :"data-action" => :add)
+        end
+        
+        def new_model_object
+          association_type?(:has_many) ? association.klass.new : object.send(:"build_#{method}")
         end
         
         def singularize_model_name

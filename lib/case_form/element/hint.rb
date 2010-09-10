@@ -23,7 +23,7 @@ module CaseForm
         #
         def default_options
           options[:class] ||= [:hint]
-          options[:id]    ||= "#{object_name}_#{method}_hint"
+          options[:id]    ||= "#{sanitized_object_name}_#{method.to_s.underscore}_hint"
         end
         
         # Generate hint's text. By default it use :text option, entered string or translated with I18n method. 
