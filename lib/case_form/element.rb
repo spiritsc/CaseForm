@@ -30,6 +30,6 @@ module CaseForm
     autoload :SimpleError,           'case_form/element/errors/simple_error'
     autoload :ComplexError,          'case_form/element/errors/complex_error'
     
-    autoload :Association,           'case_form/element/association'
+    autoload :NestedModel,      'case_form/element/nested_model'
   end
 end

@@ -70,17 +70,18 @@ class Country < BaseModel
     :users    => ["User", :has_many]
   }
   self.all_columns = {
-    :id       => [:integer, false],
-    :name     => [:string, false, nil, 250]
+    :id        => [:integer, false],
+    :name      => [:string, false, nil, 250],
+    :continent => [:string, false, nil, 250]
   }
   self.all_content_columns = self.all_columns.keys - [:id]
   
   def self.all
-    [new(:id => 1, :name => "Poland"), 
-     new(:id => 2, :name => "Germany"),
-     new(:id => 3, :name => "France"),
-     new(:id => 4, :name => "Spain"),
-     new(:id => 5, :name => "US")]
+    [new(:id => 1, :name => "Poland", :continent => "Europe"), 
+     new(:id => 2, :name => "Germany", :continent => "Europe"),
+     new(:id => 3, :name => "France", :continent => "Europe"),
+     new(:id => 4, :name => "Spain", :continent => "Europe"),
+     new(:id => 5, :name => "US", :continent => "North America")]
   end
   
   def self.priority
@@ -99,7 +100,9 @@ end
 class User < BaseModel
   self.associations = { 
     :country          => [ "Country", :belongs_to],
+    :special_country  => [ "Country", :belongs_to],
     :profile          => [ "Profile", :has_one],
+    :special_profile  => [ "Profile", :has_one],
     :projects         => [ "Project", :has_many],
     :special_projects => [ "Project", :has_many],
     :des_projects     => [ "Project", :has_many]
@@ -138,13 +141,13 @@ class User < BaseModel
   end
   
   def country
-    Country.new(:user_id => self.id, :id => nil, :name => "Poland")
+    Country.new(:user_id => self.id, :id => nil, :name => "Poland", :continent => "Europe")
   end
   
   def country_attributes=(*); end;
   
   def profile
-    Profile.new(:user_id => self.id, :id => nil, :email => nil)
+    Profile.new(:user_id => self.id, :id => nil, :email => nil, :twitter => nil)
   end
   
   def profile_attributes=(*); end;
@@ -204,7 +207,8 @@ class Profile < BaseModel
   self.all_columns = {
     :id       => [:integer, false],
     :user_id  => [:integer, false],
-    :name     => [:string, false, nil, 250]
+    :email    => [:string, false, nil, 250],
+    :twitter  => [:string, false, nil, 250]
   }
   self.all_content_columns = self.all_columns.keys - [:id, :user_id]
 end
