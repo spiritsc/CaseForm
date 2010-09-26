@@ -35,6 +35,10 @@ lib/case_form/element/inputs/string_input.rb
 lib/case_form/element/inputs/text_input.rb
 lib/case_form/element/label.rb
 lib/case_form/element/nested_model.rb
+lib/case_form/element_ext/associationable.rb
+lib/case_form/element_ext/columnable.rb
+lib/case_form/element_ext/naming.rb
+lib/case_form/element_ext/validationable.rb
 lib/case_form/errors.rb
 lib/case_form/form_builder.rb
 lib/case_form/inputs.rb

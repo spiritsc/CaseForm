@@ -1,8 +1,12 @@
 module CaseForm
   module ElementExt
     module Associationable
+      def associationable?
+        object.class.respond_to?(:reflect_on_association)
+      end
+      
       def association
-        object.class.reflect_on_association(method) if object.class.respond_to?(:reflect_on_association)
+        object.class.reflect_on_association(method) if associationable?
       end
             
       def association_class
