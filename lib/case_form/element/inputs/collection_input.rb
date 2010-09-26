@@ -2,6 +2,8 @@
 module CaseForm
   module Element
     class CollectionInput < Input
+      include ElementExt::Associationable
+      
       self.allowed_options << [:disabled, :checked, :selected, :readonly, 
                                :collection, :label_method, :value_method]
                                
@@ -22,10 +24,6 @@ module CaseForm
         def boolean_collection
           [[I18n.t(:"case_form.yes", :default => "Yes"), true], 
            [I18n.t(:"case_form.no", :default => "No"), false]]
-        end
-        
-        def association_class
-          association.klass if association
         end
         
         def collection_is_association_class?

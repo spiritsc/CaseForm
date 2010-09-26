@@ -49,4 +49,14 @@ class LabelTest < ActionView::TestCase
   test "should generate label with invalid custom data (HTML attribute)" do
     assert_raise(ArgumentError) { label_case_form_for(@user, :firstname, :custom => :foo) }
   end
+  
+  test "should generate label as required" do
+    label_case_form_for(@user, :firstname, :required => true)
+    assert_select "label[for=user_firstname]", "Firstname*"
+  end
+  
+  test "should generate label as not required" do
+    label_case_form_for(@user, :firstname, :required => false)
+    assert_select "label[for=user_firstname]", "Firstname"
+  end
 end

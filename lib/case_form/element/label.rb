@@ -1,6 +1,9 @@
 module CaseForm
   module Element
     class Label < Base
+      include ElementExt::Validationable
+      include ElementExt::Columnable
+      
       self.allowed_options << [:for, :text, :required]
       
       attr_accessor :method
@@ -22,8 +25,8 @@ module CaseForm
         # Distribute default options for label.
         #
         def default_options
-          options[:class] ||= [:label]
-          options[:id]    ||= "#{sanitized_object_name}_#{specific_method}_label"
+          options[:class]    ||= [:label]
+          options[:id]       ||= "#{sanitized_object_name}_#{specific_method}_label"
         end
         
         # Generate label text with optional required symbol.

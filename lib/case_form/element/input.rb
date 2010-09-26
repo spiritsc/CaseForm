@@ -2,6 +2,9 @@
 module CaseForm
   module Element
     class Input < Base
+      include ElementExt::Validationable
+      include ElementExt::Columnable
+      
       self.allowed_options << [:autofocus, :required, :label, :error, :hint]
       
       attr_accessor :method
@@ -45,7 +48,7 @@ module CaseForm
         end
         
         def label
-          Element::Label.new(builder, method, label_options).generate
+          Element::Label.new(builder, method, label_options.merge(:required => required?)).generate
         end
         
         def label_options

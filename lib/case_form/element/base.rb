@@ -1,7 +1,14 @@
+require 'case_form/element_ext/naming'
+require 'case_form/element_ext/columnable'
+require 'case_form/element_ext/validationable'
+require 'case_form/element_ext/associationable'
+
 # coding: utf-8
 module CaseForm
   module Element
     class Base
+      include ElementExt::Naming
+      
       HTML_OPTIONS = [:id, :class, :style, :readonly, :disabled, :type, :name,
                       :autofocus, :placeholder, :required, :multiple, :checked, :selected, 
                       :for, :min, :max, :step, :pattern, :size, :maxlength, :cols, :rows]
@@ -51,44 +58,25 @@ module CaseForm
         def object_name
           @builder.object_name
         end
-        
-        def sanitized_object_name
-          object_name.gsub(/\]\[|[^-a-zA-Z0-9:.]/, "_").sub(/_$/, "")
-        end
 
         def object
           @builder.object
         end
-        
-        def object_column
-          object.column_for_attribute(method) if object.class.columns.map(&:name).include?(method.to_sym)
+                
+        def template
+          builder.template
         end
         
-        def object_column_type?(type)
-          object_column and object_column.type == type
-        end
-        
-        def association
-          object.class.reflect_on_association(method) if object.class.respond_to?(:reflect_on_association)
-        end
-        
-        def association_type?(type)
-          association and association.macro == type
-        end
-        
-        def association_method
-          case association.macro
-          when :belongs_to
-            :"#{method.to_s}_id"
-          when :has_one
-            method
-          when :has_many
-            :"#{method.to_s.singularize}_ids"
+        def required?
+          if options.has_key?(:required)
+            options[:required]
+          elsif respond_to?(:validationable?) && validationable? && method_validations.any? { |v| v.kind == :presence }
+            true
+          elsif respond_to?(:columnable?) && object_column.present? && object_column.null == false
+            true
+          else
+            CaseForm.all_fields_required
           end
-        end
-        
-        def specific_method
-          association ? association_method : method
         end
         
         def new?
@@ -98,25 +86,9 @@ module CaseForm
         def action
           new? ? :new : :edit
         end
-
-        def required?
-          if options.has_key?(:required)
-            options[:required]
-          elsif object.class.respond_to?(:validators_on)
-            object.class.validators_on(method).any? { |v| v.kind == :presence }
-          elsif object_column
-            object.column_for_attribute(method).null == false
-          else
-            CaseForm.all_fields_required
-          end
-        end
         
         def wrapper_tag
           CaseForm.wrapper_tag
-        end
-        
-        def template
-          builder.template
         end
     end
   end

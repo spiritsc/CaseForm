@@ -1,6 +1,8 @@
 module CaseForm
   module Element
     class NestedModel < Base
+      include ElementExt::Associationable
+      
       self.allowed_options << [:allow_destroy, :destroy_text, :allow_create, :create_text, 
                                :collection, :fields]
       
@@ -69,13 +71,10 @@ module CaseForm
         #  I18n.t(:"case_form.nested_attributes.create", :model => singularize_model_name, :default => "Add #{singularize_model_name}")
         #end
         
-        def new_model_object
+        def new_nested_model_object
           association_type?(:has_many) ? association.klass.new : object.send(:"build_#{method}")
         end
         
-        def singularize_model_name
-          method.to_s.singularize.downcase
-        end
     end
   end
 end

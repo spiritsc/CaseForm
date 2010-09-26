@@ -1,6 +1,8 @@
 module CaseForm
   module Element
     class SimpleError < Error
+      include ElementExt::Associationable
+      
       attr_accessor :method
       
       # Initialize error object

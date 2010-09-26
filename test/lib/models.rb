@@ -109,7 +109,7 @@ class User < BaseModel
   }
   self.all_columns = {
     :id          => [:integer, false],
-    :country_id  => [:integer, false],
+    :country_id  => [:integer, true],
     :firstname   => [:string, true, "Enter firstname", 200],
     :lastname    => [:string, false, nil, 250],
     :description => [:text, true],
@@ -117,7 +117,7 @@ class User < BaseModel
     :updated_at  => [:datetime, true],
     :login_at    => [:timestamp, true],
     :born_at     => [:date, true],
-    :admin       => [:boolean, false],
+    :admin       => [:boolean, true],
     :height      => [:decimal, false, nil, 10, 5, 3],
     :weight      => [:float, false],
     :age         => [:integer, false],
@@ -129,7 +129,6 @@ class User < BaseModel
   alias_method :birthday_on, :birthday_at
   
   attr_accessor :id
-  attr_accessor :country_id # AKA belongs_to :country
   
   undef_method :id
   
@@ -141,7 +140,7 @@ class User < BaseModel
   end
   
   def country
-    Country.new(:user_id => self.id, :id => nil, :name => "Poland", :continent => "Europe")
+    Country.new(:id => nil, :name => "Poland", :continent => "Europe")
   end
   
   def country_attributes=(*); end;

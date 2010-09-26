@@ -162,4 +162,36 @@ class InputTest < ActionView::TestCase
   test "should generate input with invalid custom data (HTML attribute)" do
     assert_raise(ArgumentError) { input_case_form_for(@user, :attribute, :firstname, :custom => :foo) }
   end
+  
+  test "should generate input as required" do
+    input_case_form_for(@user, :string, :firstname, :required => true)
+    assert_select "input[type=text][required=required]", 1
+    assert_select "label", "Firstname*"
+  end
+  
+  test "should generate input as not required" do
+    input_case_form_for(@user, :string, :firstname, :required => false)
+    assert_select "input[type=text][required=required]", 0
+    assert_select "label", "Firstname"
+  end
+  
+  test "should generate input as required from validation" do
+    input_case_form_for(@valid_user, :string, :firstname)
+    assert_select "input[type=text][required=required]", 1
+    assert_select "label", "Firstname*"
+  end
+  
+  test "should generate input as required from column NULL" do
+    input_case_form_for(@user, :string, :lastname)
+    assert_select "input[type=text][required=required]", 1
+    assert_select "label", "Lastname*"
+  end
+  
+  test "should generate input as required from config" do
+    CaseForm.all_fields_required = true
+    input_case_form_for(@user, :string, :firstname)
+    CaseForm.all_fields_required = false
+    assert_select "input[type=text][required=required]", 1
+    assert_select "label", "Firstname*"
+  end
 end
