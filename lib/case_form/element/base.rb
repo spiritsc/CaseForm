@@ -28,7 +28,7 @@ module CaseForm
         def validate_options #:nodoc same as assert_valid_keys for Hash
           allowed = self.class.allowed_options.flatten
           banned = options.keys - allowed
-          raise(ArgumentError, "Unknown option(s): #{banned.join(', ')}. Available input options: #{allowed.join(', ')}") unless banned.empty?
+          raise(ArgumentError, "Unknown option(s): #{banned.join(', ')}. Available options: #{allowed.join(', ')}") unless banned.empty?
         end
         
         def default_options

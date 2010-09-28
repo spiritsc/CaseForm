@@ -1,10 +1,10 @@
+# coding: utf-8
 module CaseForm
   module Element
     class NestedModel < Base
       include ElementExt::Associationable
       
-      self.allowed_options << [:allow_destroy, :destroy_text, :allow_create, :create_text, 
-                               :collection, :fields]
+      self.allowed_options << [:destructor, :generator, :collection, :fields]
       
       attr_accessor :method
       
@@ -14,67 +14,73 @@ module CaseForm
       end
       
       def generate(&block)
-        block_given? ? nested_attributes(&block) : default_nested_attributes
+        Element::Fieldset.new(builder).generate(contents(&block))
       end
       
       private
         def default_options
           super
-          options[:"data-association"] = method
-          # options[:allow_destroy]      = allow_destroy? # FIXME why ||= don't work
-          # options[:allow_create]       = allow_create?
-          # options[:destroy_text]     ||= destroy_text
-          # options[:create_text]      ||= create_text
-        end
-        
-        def validate_nested_attributes_association(method, object)
-          raise(NoMethodError, "Not defined :accepts_nested_attributes_for method 
-                for association in #{object.class} model!") unless object.respond_to?(:"#{method}_attributes=")
-          method
-        end
-        
-        def nested_attributes(&block)
-          Element::Fieldset.new(builder).generate(nested_attributes_content(&block).join.html_safe)
-        end
-        
-        def default_nested_attributes
-          nested_attributes { |f| f.attributes }
+          options[:custom]               = {}
+          options[:custom][:association] = method
+          options[:collection]         ||= default_collection
+          options[:destructor]         ||= allow_destroy?
         end
         
         def nested_attributes_method_defined?
           object.respond_to?(:"#{method}_attributes=")
         end
         
-        def nested_attributes_content(&block)
-          content = []
-          content << builder.case_fields_for(method, options, &block)
-          content
+        def contents(&block)
+          contents = []
+          [:nested_model, :generator].each do |element|
+            if options[element] == false
+              options.delete(element)
+              next
+            else
+              contents << send(element, &block)
+            end
+          end
+          contents.join.html_safe
         end
         
-        #def allow_destroy?
-        #  if options.has_key?(:allow_destroy)
-        #    options[:allow_destroy]
-        #  else
-        #    association_type?(:has_many) ? object.class.nested_attributes_options[method.to_sym][:allow_destroy] : false
-        #  end
-        #end
-        #
-        #def allow_create?
-        #  association_type?(:has_many) ? (options.has_key?(:allow_create) ? options[:allow_create] : true) : false
-        #end
-        #
-        #def destroy_text
-        #  I18n.t(:"case_form.nested_attributes.destroy", :model => singularize_model_name, :default => "Remove #{singularize_model_name}")
-        #end
-        #
-        #def create_text
-        #  I18n.t(:"case_form.nested_attributes.create", :model => singularize_model_name, :default => "Add #{singularize_model_name}")
-        #end
-        
-        def new_nested_model_object
-          association_type?(:has_many) ? association.klass.new : object.send(:"build_#{method}")
+        def nested_model(&block)
+          if block_given?
+            builder.case_fields_for(method, collection, options.merge(custom_options), &block)
+          else
+            builder.case_fields_for(method, collection, options.merge(custom_options)) { |f| f.attributes(*nested_model_fields) }
+          end
         end
         
+        def generator(&block)
+          Element::GeneratorHandle.new(builder, method, generator_options).generate(&block) if collection_association?
+        end
+        
+        def generator_options
+          generator_options = options.delete(:generator) || {}
+          generator_options.is_a?(String) ? { :text => generator_options } : generator_options
+          generator_options.merge({ :fields => nested_model_fields })
+        end
+        
+        def allow_destroy?
+          collection_association? ? object.class.nested_attributes_options[method.to_sym][:allow_destroy] : false
+        end
+        
+        def default_collection
+          object.send(method) || (new_nested_model unless collection_association?)
+        end
+        
+        def new_nested_model
+          collection_association? ? association_class.new : object.send(:"build_#{method}")
+        end
+        
+        def nested_model_fields
+          options[:fields]
+        end
+        
+        def collection
+          collection = options.delete(:collection)
+          collection unless collection.nil?
+        end
     end
   end
 end

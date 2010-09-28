@@ -20,7 +20,7 @@ require 'action_view/test_case'
 require 'lib/models'
 
 class ActionView::TestCase
-  def setup
+  setup do
     generate_virtual_models
   end
   
@@ -46,6 +46,15 @@ class ActionView::TestCase
     @invalid_user = InvalidUser.new(
       :id => 1,
       :firstname => "J")
+    
+    @country = Country.new(:id => 1, :name => "Poland", :continent => "Europe")
+    @profile = Profile.new(:user_id => @user.id, :id => 1, :email => "example@mail.com", :twitter => @example)
+    @projects = []
+    2.times { |i| @projects << Project.new(:user_id => @user.id, :id => 1, :name => "Project #{i}", :address => "Address #{i}") }
+    
+    @user.country = @country
+    @user.profile = @profile
+    @user.projects = @projects
   end
   
   def cf_config(key)

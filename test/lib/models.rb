@@ -33,6 +33,11 @@ class BaseModel < OpenStruct
   class_inheritable_accessor :associations, :all_columns, :all_content_columns
   # columns: type, null, default, limit, precision, scale
   
+  def initialize(*args)
+    self.all_columns.keys.each { |col| class_eval { attr_accessor col } }
+    super
+  end
+  
   def self.reflect_on_association(attribute)
     association = self.associations[attribute.to_sym]
     return unless association
@@ -62,6 +67,10 @@ class BaseModel < OpenStruct
   
   def _destroy
     false
+  end
+  
+  def self.human
+    self.name
   end
 end
 
@@ -128,7 +137,7 @@ class User < BaseModel
   attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_phone, :birthday_at, :user_zone
   alias_method :birthday_on, :birthday_at
   
-  attr_accessor :id
+  attr_accessor :id, :country, :profile, :projects
   
   undef_method :id
   
@@ -139,22 +148,18 @@ class User < BaseModel
     options
   end
   
-  def country
-    Country.new(:id => nil, :name => "Poland", :continent => "Europe")
+  def build_country
+    Country.new(:id => nil, :name => nil, :continent => nil)
   end
   
   def country_attributes=(*); end;
   
-  def profile
+  def build_profile
     Profile.new(:user_id => self.id, :id => nil, :email => nil, :twitter => nil)
   end
   
   def profile_attributes=(*); end;
   
-  def projects
-    [Project.new(:user_id => self.id, :id => 1, :name => nil, :address => nil),
-     Project.new(:user_id => self.id, :id => 2, :name => nil, :address => nil)]
-  end
   alias_method :des_projects, :projects
   
   def projects_attributes=(*); end;
@@ -224,9 +229,11 @@ class Project < BaseModel
   }
   self.all_content_columns = self.all_columns.keys - [:id, :user_id]
   
+  #attr_accessor :name, :address, :id
+  
   def self.all
     all = []
-    5.times { |i| all << Project.new(:id => i, :name => "Project #{i}") }
+    5.times { |i| all << Project.new(:id => i, :name => "EXTRA Project #{i}", :address => "Address #{i}") }
     all
   end
   

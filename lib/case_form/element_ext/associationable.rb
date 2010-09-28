@@ -31,6 +31,24 @@ module CaseForm
       def specific_method
         association ? association_method : method
       end
+      
+      def validate_nested_attributes_association(method, object)
+        raise(NoMethodError, "Not defined :accepts_nested_attributes_for method " +
+              "for :#{method} association in #{object.class} model!") unless object.respond_to?(:"#{method}_attributes=")
+        method
+      end
+      
+      def association_human_model_name
+        association_class.human
+      end
+      
+      def one_to_one_association?
+        association_type?(:belongs_to) || association_type?(:has_one)
+      end
+      
+      def collection_association?
+        association_type?(:has_many)
+      end
     end
   end
 end

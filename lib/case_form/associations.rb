@@ -22,14 +22,13 @@ module CaseForm
     alias_method :has_many, :association
     alias_method :habtm, :association
     
-    # def new_object(association, options={})
-    #   Element::AssociationHandle.new(self, association, options.merge(:as => :new)).generate
-    # end
-    # 
-    # def destroy_object(association, options={})
-    #   @template.link_to("remove", "#")
-    #   #Element::AssociationHandle.new(self, association, options.merge(:as => :destroy)).generate
-    # end
+    def new_object(association, options={})
+      Element::GeneratorHandle.new(self, association, options).generate
+    end
+    
+    def destroy_object(association, options={})
+      Element::DestructorHandle.new(self, association, options).generate
+    end
     
     def case_fields_for(record_or_name_or_array, *args, &block)
       options = args.extract_options!
@@ -50,16 +49,21 @@ module CaseForm
     
       def fields_for_nested_model(name, object, options, block)
         object = object.to_model if object.respond_to?(:to_model)
-        # allow_destroy = options[:allow_destroy]
-        # destroy_text  = options[:destroy_text]
+        destructor = options.delete(:destructor)
+        destructor_options = case destructor
+        when String then { :text => destructor }
+        when Hash   then destructor
+        else
+          {}
+        end
 
         @template.content_tag(:div, nil, :class => "#{options[:"data-association"]}_association_inputs") do
           if object.persisted?
             @template.fields_for(name, object, options) do |builder|
               @template.concat(
                 block.call(builder) + 
-                (builder.hidden_field(:id) unless builder.emitted_hidden_id?) # + 
-                # (builder.destroy_object(destroy_text, options) if allow_destroy)
+                (builder.hidden_field(:id) unless builder.emitted_hidden_id?) + 
+                (builder.destroy_object(options[:"data-association"], destructor_options) unless destructor == false)
               )
             end
           else

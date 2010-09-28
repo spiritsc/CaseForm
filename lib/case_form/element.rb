@@ -33,5 +33,8 @@ module CaseForm
     autoload :ComplexError,          'case_form/element/errors/complex_error'
     
     autoload :NestedModel,           'case_form/element/nested_model'
+    autoload :Handle,                'case_form/element/nested_models/handle'
+    autoload :GeneratorHandle,       'case_form/element/nested_models/handles/generator_handle'
+    autoload :DestructorHandle,      'case_form/element/nested_models/handles/destructor_handle'
   end
 end

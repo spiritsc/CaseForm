@@ -20,6 +20,9 @@ module CaseForm
   mattr_accessor :input_elements
   @@input_elements = [:label, :input, :error, :hint]
   
+  mattr_accessor :nested_model_elements
+  @@nested_model_elements = [:nested_model, :destructor, :generator]
+  
   mattr_accessor :form_buttons
   @@form_buttons = [:commit, :reset]
   
