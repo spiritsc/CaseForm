@@ -35,6 +35,9 @@ lib/case_form/element/inputs/string_input.rb
 lib/case_form/element/inputs/text_input.rb
 lib/case_form/element/label.rb
 lib/case_form/element/nested_model.rb
+lib/case_form/element/nested_models/handle.rb
+lib/case_form/element/nested_models/handles/destructor_handle.rb
+lib/case_form/element/nested_models/handles/generator_handle.rb
 lib/case_form/element_ext/associationable.rb
 lib/case_form/element_ext/columnable.rb
 lib/case_form/element_ext/naming.rb
@@ -75,6 +78,8 @@ test/element/inputs/string_input_test.rb
 test/element/inputs/text_input_test.rb
 test/element/label_test.rb
 test/element/nested_model_test.rb
+test/element/nested_models/handles/destructor_handle_test.rb
+test/element/nested_models/handles/generator_handle_test.rb
 test/form_builder_test.rb
 test/form_helper_test.rb
 test/lib/models.rb

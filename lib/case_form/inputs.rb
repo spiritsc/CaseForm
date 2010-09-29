@@ -1075,6 +1075,7 @@ module CaseForm
         when /url/      then :url
         when /phone/    then :telephone
         when /zone/     then :time_zone
+        when "_destroy" then :checkbox
         else 
           case object.column_for_attribute(method).type
           when (:string || :binary)             then :string

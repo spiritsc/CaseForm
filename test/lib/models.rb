@@ -25,28 +25,39 @@ class Association
   end
 end
 
-class BaseModel < OpenStruct
+class BaseModel
   extend ActiveModel::Naming
   include ActiveModel::Conversion
   include ActiveModel::Validations
   
-  class_inheritable_accessor :associations, :all_columns, :all_content_columns
   # columns: type, null, default, limit, precision, scale
+  class_inheritable_accessor :associations, :all_columns, :all_content_columns
   
-  def initialize(*args)
-    self.all_columns.keys.each { |col| class_eval { attr_accessor col } }
-    super
+  attr_accessor :id
+  
+  def initialize(attributes={})
+    attributes.each do |k, v|
+      send("#{k}=", v) if respond_to?("#{k}=")
+    end
   end
   
   def self.reflect_on_association(attribute)
     association = self.associations[attribute.to_sym]
     return unless association
+    attr_name = case association[1]
+    when :has_many   then :"#{attribute.to_s.singularize}_ids"
+    when :belongs_to then :"#{attribute}_id"
+    when :has_one    then :"#{attribute}"
+    end
+    class_eval { attr_accessor attr_name }
     Association.new(*association)
   end
   
   def self.columns
     columns = []
-    self.all_columns.each { |col| columns << Column.new(*col) }
+    self.all_columns.each do |col|
+      columns << Column.new(*col)
+    end
     columns
   end
   
@@ -61,6 +72,10 @@ class BaseModel < OpenStruct
     Column.new(*args)
   end
   
+  def new_record?
+    false
+  end
+  
   def persisted?
     true
   end
@@ -70,7 +85,7 @@ class BaseModel < OpenStruct
   end
   
   def self.human
-    self.name
+    self.class
   end
 end
 
@@ -84,6 +99,9 @@ class Country < BaseModel
     :continent => [:string, false, nil, 250]
   }
   self.all_content_columns = self.all_columns.keys - [:id]
+  
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
   
   def self.all
     [new(:id => 1, :name => "Poland", :continent => "Europe"), 
@@ -134,12 +152,11 @@ class User < BaseModel
   }
   self.all_content_columns = self.all_columns.keys - [:id, :country_id]
   
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
+  
   attr_accessor :password_confirmation, :twitter_url, :file_path, :mobile_phone, :birthday_at, :user_zone
   alias_method :birthday_on, :birthday_at
-  
-  attr_accessor :id, :country, :profile, :projects
-  
-  undef_method :id
   
   def self.nested_attributes_options
     options = {}
@@ -160,8 +177,6 @@ class User < BaseModel
   
   def profile_attributes=(*); end;
   
-  alias_method :des_projects, :projects
-  
   def projects_attributes=(*); end;
   alias_method :des_projects_attributes=, :projects_attributes=
   
@@ -174,6 +189,9 @@ class ValidUser < User
   self.associations = User.associations
   self.all_columns = User.all_columns
   self.all_content_columns = User.all_content_columns
+  
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
   
   validates :firstname, :length => {:minimum => 3, :maximum => 40}, :presence => true
   validates :lastname, :email, :presence => true
@@ -191,6 +209,9 @@ class InvalidUser < User
   self.all_columns = User.all_columns
   self.all_content_columns = User.all_content_columns
   
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
+  
   attr_reader :errors
   
   def initialize(options={})
@@ -206,7 +227,7 @@ end
 
 class Profile < BaseModel
   self.associations = { 
-    :users    => [ "User", :belongs_to]
+    :user     => [ "User", :belongs_to]
   }
   self.all_columns = {
     :id       => [:integer, false],
@@ -215,11 +236,14 @@ class Profile < BaseModel
     :twitter  => [:string, false, nil, 250]
   }
   self.all_content_columns = self.all_columns.keys - [:id, :user_id]
+  
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
 end
 
 class Project < BaseModel
   self.associations = { 
-    :users    => [ "User", :belongs_to ]
+    :user     => [ "User", :belongs_to ]
   }
   self.all_columns = {
     :id       => [:integer, false],
@@ -229,7 +253,8 @@ class Project < BaseModel
   }
   self.all_content_columns = self.all_columns.keys - [:id, :user_id]
   
-  #attr_accessor :name, :address, :id
+  attr_accessor *self.all_columns.keys
+  attr_accessor *self.associations.keys
   
   def self.all
     all = []
@@ -239,9 +264,5 @@ class Project < BaseModel
   
   def self.extra
     self.all[1..3]
-  end
-  
-  def _destroy
-    false
   end
 end

@@ -39,7 +39,7 @@ module CaseForm
       end
       
       def association_human_model_name
-        association_class.human
+        association_class.human_name
       end
       
       def one_to_one_association?

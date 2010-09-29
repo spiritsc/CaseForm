@@ -8,6 +8,10 @@ module CaseForm
       def singularize_model_name
         method.to_s.singularize.downcase
       end
+      
+      def object_human_model_name
+        object.class.human_name
+      end
     end
   end
 end

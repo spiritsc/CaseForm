@@ -36,21 +36,21 @@ class ActionView::TestCase
       :age => 18, 
       :height => 188, 
       :weight => 82.5)
-    @valid_user = ValidUser.new(
+    @valid_user = ValidUser.new({
       :id => 1, 
       :firstname => "John", 
       :lastname => "Doe", 
       :email => "john@doe.com", 
       :admin => true, 
-      :height => 188)
-    @invalid_user = InvalidUser.new(
+      :height => 188})
+    @invalid_user = InvalidUser.new({
       :id => 1,
-      :firstname => "J")
+      :firstname => "J"})
     
-    @country = Country.new(:id => 1, :name => "Poland", :continent => "Europe")
-    @profile = Profile.new(:user_id => @user.id, :id => 1, :email => "example@mail.com", :twitter => @example)
+    @country = Country.new({:id => 1, :name => "Poland", :continent => "Europe"})
+    @profile = Profile.new({:user_id => 1, :id => 1, :email => "example@mail.com", :twitter => @example})
     @projects = []
-    2.times { |i| @projects << Project.new(:user_id => @user.id, :id => 1, :name => "Project #{i}", :address => "Address #{i}") }
+    2.times { |i| @projects << Project.new({:user_id => 1, :id => i, :name => "Project #{i}", :address => "Address #{i}"}) }
     
     @user.country = @country
     @user.profile = @profile

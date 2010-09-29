@@ -1,3 +1,4 @@
+# coding: utf-8
 module CaseForm
   module Element
     class DestructorHandle < Handle
@@ -10,8 +11,8 @@ module CaseForm
       private
         def default_options
           super
-          options[:custom][:action] = :destroy
           options[:as]            ||= :checkbox
+          options[:custom][:action] = :destroy if link?
         end
         
         def destroy_link
@@ -19,21 +20,27 @@ module CaseForm
         end
         
         def destroy_checkbox
-          builder.check_box(:_destroy) << builder.label(specific_method, :text => text)
+          builder.checkbox(:_destroy, :label => text)
         end
         
         def translated_text
-          association_human_model_name = method
-          I18n.t(:"case_form.nested_attributes.destroy", :model => association_human_model_name, :default => default_text)
+          I18n.t(:"case_form.nested_attributes.destroy", :model => object_human_model_name, :default => default_text)
         end
         
         def default_text
-          association_human_model_name = method
-          "Destroy #{association_human_model_name}"
+          "Destroy #{object_human_model_name}"
         end
     
         def handle_type
           options[:as]
+        end
+        
+        def link?
+          handle_type == :link
+        end
+        
+        def checkbox?
+          handle_type == :checkbox
         end
     end
   end

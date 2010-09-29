@@ -12,7 +12,7 @@ module CaseForm
         raise(ArgumentError, "Unknown input type: #{type}. Available types: #{input_types.join(', ')}") unless input_types.include?(type.to_sym)
         send(type, method, options)
       elsif block_given? || object.respond_to?("#{method}_attributes=")
-        Element::NestedModel.new(self, method, options).generate(&block)
+        Element::NestedModel.new(self, method, options, &block).generate
       else
         specified_association(method, options)
       end
@@ -22,12 +22,12 @@ module CaseForm
     alias_method :has_many, :association
     alias_method :habtm, :association
     
-    def new_object(association, options={})
-      Element::GeneratorHandle.new(self, association, options).generate
+    def new_object(method, options={})
+      Element::GeneratorHandle.new(self, method, options).generate
     end
     
-    def destroy_object(association, options={})
-      Element::DestructorHandle.new(self, association, options).generate
+    def destroy_object(options={})
+      Element::DestructorHandle.new(self, options).generate
     end
     
     def case_fields_for(record_or_name_or_array, *args, &block)
@@ -45,31 +45,6 @@ module CaseForm
           raise(ArgumentError, ":has_one association is supported only with nested attributes!")
         end
         send(input, method, options)
-      end
-    
-      def fields_for_nested_model(name, object, options, block)
-        object = object.to_model if object.respond_to?(:to_model)
-        destructor = options.delete(:destructor)
-        destructor_options = case destructor
-        when String then { :text => destructor }
-        when Hash   then destructor
-        else
-          {}
-        end
-
-        @template.content_tag(:div, nil, :class => "#{options[:"data-association"]}_association_inputs") do
-          if object.persisted?
-            @template.fields_for(name, object, options) do |builder|
-              @template.concat(
-                block.call(builder) + 
-                (builder.hidden_field(:id) unless builder.emitted_hidden_id?) + 
-                (builder.destroy_object(options[:"data-association"], destructor_options) unless destructor == false)
-              )
-            end
-          else
-            @template.fields_for(name, object, options, &block)
-          end
-        end
       end
   end
 end

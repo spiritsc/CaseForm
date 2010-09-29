@@ -6,15 +6,19 @@ module CaseForm
       
       self.allowed_options << [:destructor, :generator, :collection, :fields]
       
-      attr_accessor :method
+      attr_accessor :method, :block
       
-      def initialize(builder, method, options={})
+      def initialize(builder, method, options={}, &block)
         @method = validate_nested_attributes_association(method, builder.object)
+        @block  = block
         super(builder, options)
       end
       
-      def generate(&block)
-        Element::Fieldset.new(builder).generate(contents(&block))
+      def generate
+        contents = []
+        contents << nested_model_contents
+        contents << builder.new_object(method, :fields => (block || options[:fields])) if allow_create?
+        contents.join.html_safe
       end
       
       private
@@ -23,50 +27,68 @@ module CaseForm
           options[:custom]               = {}
           options[:custom][:association] = method
           options[:collection]         ||= default_collection
-          options[:destructor]         ||= allow_destroy?
+          options[:fields]             ||= default_fields
         end
         
         def nested_attributes_method_defined?
           object.respond_to?(:"#{method}_attributes=")
         end
         
-        def contents(&block)
+        def nested_model_contents
           contents = []
-          [:nested_model, :generator].each do |element|
-            if options[element] == false
-              options.delete(element)
-              next
-            else
-              contents << send(element, &block)
+          nested_models = [collection].flatten.compact
+          nested_models.each do |object|
+            contents << nested_model(object)
+          end
+          Element::Fieldset.new(builder, :class => "#{method}_association").generate(contents.join.html_safe)
+        end
+        
+        def nested_model(object)
+          template.content_tag(:div, nil, :class => "#{method}_association_inputs") do
+            builder.case_fields_for(method, object) do |b|
+              unless block.nil?
+                block.call(b) << (b.destroy_object if allow_destroy?)
+              else
+                template.concat(b.attributes(*[nested_model_fields].flatten << (:_destroy if allow_destroy?)))
+              end
             end
           end
-          contents.join.html_safe
         end
         
-        def nested_model(&block)
-          if block_given?
-            builder.case_fields_for(method, collection, options.merge(custom_options), &block)
+        def allow_create?
+          if collection_association?
+            if options.has_key?(:generator)
+              options[:generator] != false
+            elsif block.is_a?(Proc)
+              false
+            else
+              true
+            end
           else
-            builder.case_fields_for(method, collection, options.merge(custom_options)) { |f| f.attributes(*nested_model_fields) }
+            false
           end
-        end
-        
-        def generator(&block)
-          Element::GeneratorHandle.new(builder, method, generator_options).generate(&block) if collection_association?
-        end
-        
-        def generator_options
-          generator_options = options.delete(:generator) || {}
-          generator_options.is_a?(String) ? { :text => generator_options } : generator_options
-          generator_options.merge({ :fields => nested_model_fields })
         end
         
         def allow_destroy?
-          collection_association? ? object.class.nested_attributes_options[method.to_sym][:allow_destroy] : false
+          if collection_association?
+            if options.has_key?(:desctructor)
+              options[:destructor] != false
+            elsif block.is_a?(Proc)
+              false
+            else 
+              object.class.nested_attributes_options[method.to_sym][:allow_destroy]
+            end
+          else
+            false
+          end
         end
         
         def default_collection
           object.send(method) || (new_nested_model unless collection_association?)
+        end
+        
+        def default_fields
+          (association_class.content_columns.map(&:name) - CaseForm.locked_columns).map(&:to_sym)
         end
         
         def new_nested_model
@@ -78,8 +100,7 @@ module CaseForm
         end
         
         def collection
-          collection = options.delete(:collection)
-          collection unless collection.nil?
+          options[:collection]
         end
     end
   end
