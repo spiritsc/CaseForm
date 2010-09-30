@@ -26,10 +26,12 @@ module CaseForm
         end
         
         def new_nested_model
-          if nested_model_fields.is_a?(Proc)
-            builder.case_fields_for(method, association_class.new, &block)
-          else
-            builder.case_fields_for(method, association_class.new) { |b| b.attributes(*nested_model_fields) }
+          template.content_tag(:div, nil, :class => "#{method}_association_inputs") do
+            if options[:fields].is_a?(Proc)
+              builder.case_fields_for(method, association_class.new, &block)
+            else
+              builder.case_fields_for(method, association_class.new) { |b| template.concat(b.attributes(*options[:fields])) }
+            end
           end
         end
     
@@ -46,11 +48,7 @@ module CaseForm
         end
         
         def default_fields
-          (association_class.content_columns.map(&:name) - CaseForm.locked_columns).map(&:to_sym)
-        end
-        
-        def nested_model_fields
-          options[:fields]
+          association_class.content_columns.map(&:name).map(&:to_sym) - CaseForm.locked_columns
         end
     end
   end

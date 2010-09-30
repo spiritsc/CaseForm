@@ -101,7 +101,7 @@ class DateTimeInputTest < ActionView::TestCase
   test "should generate datetime input with specific datetime" do
     datetime = Time.now + 86400
     datetime_case_form_for(@user, :created_at, :datetime => datetime)
-    assert_select("select#user_created_at_3i", 1) { assert_select "option[selected=selected]", :text => (Time.now.day + 1) }
+    assert_select("select#user_created_at_3i", 1) { assert_select "option[selected=selected]", :text => datetime.day }
   end
   
   test "should generate datetime input with start and end year" do

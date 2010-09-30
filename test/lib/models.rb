@@ -84,7 +84,7 @@ class BaseModel
     false
   end
   
-  def self.human
+  def self.human_name
     self.class
   end
 end

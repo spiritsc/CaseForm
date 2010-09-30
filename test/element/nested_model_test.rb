@@ -9,29 +9,29 @@ class NestedModelTest < ActionView::TestCase
   
   # :belongs_to association
   test "should generate association input for :belongs_to association" do
-    concat(case_form_for(@user) { |f| f.belongs_to(:special_country) })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:special_country)) })
     assert_select "select", 1
   end
   
   test "should generate association input for :belongs_to association with specified input" do
-    concat(case_form_for(@user) { |f| f.belongs_to(:country, :as => :radio) })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country, :as => :radio)) })
     assert_select "input[type=radio]", 5
   end
   
   test "should generate nasted inputs for :belongs_to association with block" do
-    concat(case_form_for(@user) { |f| f.belongs_to(:country) { |c| c.attribute(:name) } })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country) { |c| concat(c.attribute(:name)) }) })
     assert_select "fieldset", 1
     assert_select("div.country_association_inputs", 1) { assert_select "input[type=text]", 1 }
   end
   
   test "should generate nasted inputs for :belongs_to association without block and defined :accept_* method" do
-    concat(case_form_for(@user) { |f| f.belongs_to(:country) })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country)) })
     assert_select "fieldset", 1
     assert_select("div.country_association_inputs", 1) { assert_select "input[type=text]", 2 }
   end
   
   test "should generate nasted inputs for :belongs_to association without block and defined :fields option" do
-    concat(case_form_for(@user) { |f| f.belongs_to(:country, :fields => :name) })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country, :fields => :name)) })
     assert_select("div.country_association_inputs", 1) { assert_select "input[type=text]", 1 }
   end
   
@@ -41,21 +41,21 @@ class NestedModelTest < ActionView::TestCase
   
   test "should generate nasted inputs for :belongs_to association with empty object and block" do
     @user.country = nil
-    concat(case_form_for(@user) { |f| f.belongs_to(:country) { |c| c.attribute(:name) } })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country) { |c| concat(c.attribute(:name)) }) })
     assert_select("div.country_association_inputs", 1) { assert_select "input[type=text]", 1 }
     @user.country = @country
   end
   
   test "should generate nasted inputs for :belongs_to association with empty object and without block" do
     @user.country = nil
-    concat(case_form_for(@user) { |f| f.belongs_to(:country) })
+    concat(case_form_for(@user) { |f| concat(f.belongs_to(:country)) })
     assert_select("div.country_association_inputs", 1) { assert_select "input[type=text]", 2 }
     @user.country = @country
   end
   
   # :has_one association
   test "should generate nasted inputs for :has_one association" do
-    concat(case_form_for(@user) { |f| f.has_one(:profile) })
+    concat(case_form_for(@user) { |f| concat(f.has_one(:profile)) })
     assert_select "fieldset", 1
     assert_select "div.profile_association_inputs", 1 do
       assert_select "input[type=email]", 1
@@ -64,13 +64,13 @@ class NestedModelTest < ActionView::TestCase
   end
   
   test "should generate nasted inputs for :has_one association with block" do
-    concat(case_form_for(@user) { |f| f.has_one(:profile) { |p| p.attribute(:email) } })
+    concat(case_form_for(@user) { |f| concat(f.has_one(:profile) { |p| concat(p.attribute(:email)) }) })
     assert_select "fieldset", 1
     assert_select("div.profile_association_inputs", 1) { assert_select "input[type=email]", 1 }
   end
   
   test "should generate nasted inputs for :has_one association without block and with defined :fields option" do
-    concat(case_form_for(@user) { |f| f.has_one(:profile, :fields => :twitter) })
+    concat(case_form_for(@user) { |f| concat(f.has_one(:profile, :fields => :twitter)) })
     assert_select "div.profile_association_inputs", 1 do
       assert_select "input[type=email]", 0
       assert_select "input[type=text]", 1
@@ -87,90 +87,77 @@ class NestedModelTest < ActionView::TestCase
   
   test "should generate nasted inputs for :has_one association with empty object and block" do
     @user.profile = nil
-    concat(case_form_for(@user) { |f| f.has_one(:profile) { |p| p.attribute(:email) } })
+    concat(case_form_for(@user) { |f| concat(f.has_one(:profile) { |p| concat(p.attribute(:email)) }) })
     assert_select("div.profile_association_inputs", 1) { assert_select "input[type=email]", 1 }
     @user.profile = @profile
   end
   
   test "should generate nasted inputs for :has_one association with empty object and without block" do
     @user.profile = nil
-    concat(case_form_for(@user) { |f| f.has_one(:profile) })
+    concat(case_form_for(@user) { |f| concat(f.has_one(:profile)) })
     assert_select("div.profile_association_inputs", 1) { assert_select "input[type=email]", 1 }
     @user.profile = @profile
   end
   
   # :has_many association
   test "should generate association input for :has_many association" do
-    concat(case_form_for(@user) { |f| f.has_many(:special_projects) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:special_projects)) })
     assert_select "input[type=checkbox]", 5
   end
   
   test "should generate association input for :has_many association with specified input" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :as => :radio) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects, :as => :radio)) })
     assert_select "input[type=radio]", 5
   end
   
   test "should generate nasted inputs for :has_many association with block" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects) { |c| c.attribute(:name) } })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects) { |c| concat(c.attribute(:name)) }) })
     assert_select "fieldset", 1 # 2 Projects in collection 
     assert_select("div.projects_association_inputs", 2) { assert_select "input[type=text]", 2 }
   end
   
   test "should generate nasted inputs for :has_many association without block and defined :accept_* method" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects) })
-    assert_select "fieldset", 1 # 2 Projects in collection + 1 new
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects)) })
+    assert_select "fieldset", 2 # 2 Projects in collection + 1 new
     assert_select("div.projects_association_inputs", 3) { assert_select "input[type=text]", 6 }
   end
   
   test "should generate nasted inputs for :has_many association without block and with defined :fields option" do
     concat(case_form_for(@user) { |f| concat(f.has_many(:projects, :fields => :name)) })
-    assert_select "fieldset", 1 # 2 Projects in collection + 1 new
+    assert_select "fieldset", 2 # 2 Projects in collection + 1 new
     assert_select("div.projects_association_inputs", 3) { assert_select "input[type=text]", 3 }
   end
   
   test "shouldn't generate nested inputs for :has_many association without defined :accept_* method" do
-    assert_raise(NoMethodError) { concat(case_form_for(@user) { |f| f.belongs_to(:special_projects) { |c| c.attribute(:name) } }) }
+    assert_raise(NoMethodError) { concat(case_form_for(@user) { |f| f.has_many(:special_projects) { |c| c.attribute(:name) } }) }
   end
   
   test "should generate nasted inputs for :has_many association with specified collection" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :collection => Project.extra) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects, :collection => Project.extra)) })
     assert_select("div.projects_association_inputs", 4) { assert_select "input[type=text]", 8 }
   end
   
   test "shouldn't generate nasted inputs for :has_many association with empty object and block" do
     @user.projects = nil
-    concat(case_form_for(@user) { |f| f.has_many(:projects) { |a| a.attribute(:name) } })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects) { |a| concat(a.attribute(:name)) }) })
     assert_select("div.projects_association_inputs", 0)
     @user.projects = @projects
   end
   
   test "should generate nasted inputs for :has_many association with empty object and without block" do
     @user.projects = nil
-    concat(case_form_for(@user) { |f| f.has_many(:projects) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects)) })
     assert_select("div.projects_association_inputs", 1) { assert_select "input[type=text]", 2 }
     @user.projects = @projects
   end
   
   test "should generate nasted inputs for :has_many association without :generator" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :generator => false) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects, :generator => false)) })
     assert_select "a[data-action=new]", 0
   end
   
-  test "should generate nasted inputs for :has_many association with text in :generator" do
-    text = "Dodaj"
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :generator => text) })
-    assert_select "a[data-action=new]", text
-  end
-  
   test "should generate nasted inputs for :has_many association without :destructor" do
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :destructor => false) })
+    concat(case_form_for(@user) { |f| concat(f.has_many(:projects, :destructor => false)) })
     assert_select "input[type=checkbox]", 2
-  end
-  
-  test "should generate nasted inputs for :has_many association with text in :destructor" do
-    text = "usun"
-    concat(case_form_for(@user) { |f| f.has_many(:projects, :fields => :name, :destructor => text) })
-    assert_select "input[type=checkbox]", :count => 2
-    assert_select "label", :count => 2, :text => text
   end
 end

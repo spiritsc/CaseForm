@@ -17,7 +17,7 @@ module CaseForm
       def generate
         contents = []
         contents << nested_model_contents
-        contents << builder.new_object(method, :fields => (block || options[:fields])) if allow_create?
+        contents << builder.new_object(method, :fields => (block.nil? ? options[:fields] : block)) if allow_create?
         contents.join.html_safe
       end
       
@@ -40,7 +40,7 @@ module CaseForm
           nested_models.each do |object|
             contents << nested_model(object)
           end
-          Element::Fieldset.new(builder, :class => "#{method}_association").generate(contents.join.html_safe)
+          Element::Fieldset.new(builder, :class => "#{method}_association").generate(contents.join.html_safe) unless contents.blank?
         end
         
         def nested_model(object)
@@ -49,7 +49,9 @@ module CaseForm
               unless block.nil?
                 block.call(b) << (b.destroy_object if allow_destroy?)
               else
-                template.concat(b.attributes(*[nested_model_fields].flatten << (:_destroy if allow_destroy?)))
+                fields = [options[:fields]].flatten 
+                fields << :_destroy if allow_destroy?
+                template.concat(b.attributes(*fields))
               end
             end
           end
@@ -88,15 +90,11 @@ module CaseForm
         end
         
         def default_fields
-          (association_class.content_columns.map(&:name) - CaseForm.locked_columns).map(&:to_sym)
+          association_class.content_columns.map(&:name).map(&:to_sym) - CaseForm.locked_columns
         end
         
         def new_nested_model
           collection_association? ? association_class.new : object.send(:"build_#{method}")
-        end
-        
-        def nested_model_fields
-          options[:fields]
         end
         
         def collection

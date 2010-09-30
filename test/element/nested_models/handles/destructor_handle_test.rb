@@ -3,7 +3,7 @@ require 'test_helper'
 
 class DestructorHandleTest < ActionView::TestCase
   def destructor_case_form_for(object, association, options={})
-    concat(case_form_for(object) { |f| concat(f.association(association) { |d| d.destroy_object(options) }) })
+    concat(case_form_for(object) { |f| concat(f.association(association) { |d| concat(d.destroy_object(options)) }) })
   end
   
   test "should generate destructor" do
