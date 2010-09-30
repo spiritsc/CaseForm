@@ -1,8 +1,7 @@
 == TODO LIST
 * dodac GROUP_BY dla select
 * zrobic zaawansowane opcje dla elementow complex_error, np. :header => { :tag => :div, :id => :some_id, :message => :sth }
-* f.add_object(:sth) dla dodawania nowych pol przy pomocy JS
+* JS dla f.new_object i f.destroy_object
 * placeholders w locales (HTML5)
 * napisac do konca dokumentacje dla metod
 * napisac README
-* zrobic poprawne HTML ID dla elemenentow: label, error (zeby nie bylo: user[profile]_sth_label)

@@ -23,7 +23,7 @@ module CaseForm
         #
         def default_options
           options[:class] ||= [:error]
-          options[:id]    ||= "#{object_name}_#{method}_error"
+          options[:id]    ||= "#{sanitized_object_name}_#{method}_error"
         end
         
         # Return all errors on method. If method is association than it takes also errors on association.
